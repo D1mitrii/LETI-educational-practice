@@ -5,6 +5,7 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Button
 import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.Pane
 import java.net.URL
 import java.util.*
 
@@ -23,12 +24,21 @@ class Controller : Initializable {
     @FXML
     private lateinit var collapseButton: Button
 
+    @FXML
+    private lateinit var Menu: AnchorPane
+
+
+    @FXML
+    private lateinit var GraphArea: Pane
 
     @FXML
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
+        assert(GraphArea != null) {"fx:id=\"GraphArea\" was not injected: check your FXML file 'main.fxml'." }
+        assert(Menu != null) {"fx:id=\"Menu\" was not injected: check your FXML file 'main.fxml'." }
         assert(closeButton != null) { "fx:id=\"closeButton\" was not injected: check your FXML file 'main.fxml'." }
         assert(collapseButton != null) {"fx:id=\"collapseButton\" was not injected: check your FXML file 'main.fxml'." }
         assert(topBar != null) { "fx:id=\"topBar\" was not injected: check your FXML file 'main.fxml'." }
+
         closeButton.onMousePressed = EventHandler {
             val stage = (it.source as Button).scene.window
             stage.hide()
