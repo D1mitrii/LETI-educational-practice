@@ -28,3 +28,11 @@
     -fx-font-weight: 400;
     -fx-wrap-text: break-word;
 }
+
+#Vertex{
+    -fx-fill: #ff0000;
+}
+
+#Vertex:hover{
+    -fx-fill: #AAFF00FF;
+}

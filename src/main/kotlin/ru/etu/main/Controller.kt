@@ -80,8 +80,11 @@ class Controller : Initializable {
 
 
         GraphArea.onMouseClicked = EventHandler {
+            if (!it.isStillSincePress)
+                return@EventHandler
             if (it.button == MouseButton.PRIMARY){
-                GraphArea.children.add(graph.createVertex(it.sceneX, it.sceneY))
+                val vertex = graph.createVertex(it.sceneX, it.sceneY) ?: return@EventHandler
+                graph.drawVertex(GraphArea, vertex)
             }
         }
     }

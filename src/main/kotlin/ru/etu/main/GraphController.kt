@@ -7,6 +7,7 @@ import javafx.scene.Cursor
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.layout.Pane
+import javafx.scene.text.Text
 import java.net.URL
 import java.util.*
 
@@ -22,14 +23,40 @@ class GraphController(var pane: Pane){
     @FXML
     private var contextMenu: ContextMenu = ContextMenu(renameOption, deleteOption)
 
-    val startArea: Pair<Double, Double> = Pair<Double, Double>(pane.layoutX, pane.layoutY)
-    val width: Double = 980.0
-    val height: Double = 624.0
+    private val startArea: Pair<Double, Double> = Pair(pane.layoutX, pane.layoutY)
+    private val width: Double = 980.0
+    private val height: Double = 624.0
 
     private val vertexArray: MutableList<Vertex> = mutableListOf()
 
-    fun createVertex(x: Double, y: Double) : Vertex {
-        val vertex = Vertex("A", x - startArea.first, y - startArea.second)
+    private val names: MutableMap<String, Boolean> = mutableMapOf()
+
+    init {
+        for (ch in 'A'..'Z'){
+            names[ch.toString()] = true
+        }
+    }
+
+    fun isNameAvailable(name: String) : Boolean {
+        return names[name] ?: false
+    }
+
+    private fun getName(): String{
+        for (ch in 'A'..'Z'){
+            val string = ch.toString()
+            if (names[string] == true){
+                names[string] = false
+                return string
+            }
+        }
+        return "-"
+    }
+    //TODO Добавить возможность передвигать за название вершины (мб вершину сделать как Group)
+    fun createVertex(x: Double, y: Double) : Vertex? {
+        val name = getName()
+        if (name == "-") return null
+
+        val vertex = Vertex(name, x - startArea.first, y - startArea.second)
         vertex.onMouseEntered = EventHandler {
             vertex.cursor = Cursor.HAND
         }
@@ -50,8 +77,7 @@ class GraphController(var pane: Pane){
             else if (newY >= height){
                 newY = height
             }
-            vertex.centerX = newX
-            vertex.centerY = newY
+            vertex.changePosition(newX, newY)
         }
         vertex.onMouseClicked = EventHandler {
             it.consume()
@@ -71,4 +97,7 @@ class GraphController(var pane: Pane){
         return vertex
     }
 
+    fun drawVertex(pane: Pane, vertex: Vertex) {
+        pane.children.addAll(vertex, vertex.text)
+    }
 }
