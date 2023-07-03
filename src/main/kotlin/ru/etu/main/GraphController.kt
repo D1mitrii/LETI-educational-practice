@@ -55,12 +55,6 @@ class GraphController(var pane: Pane){
         }
         vertex.onMouseClicked = EventHandler {
             it.consume()
-            if (it.isStillSincePress) {
-                return@EventHandler
-            }
-            if (!it.isSecondaryButtonDown){
-                return@EventHandler
-            }
             contextMenu.show(pane, it.screenX, it.screenY)
             renameOption.onAction = EventHandler {
                 if (contextMenu.isShowing) {
