@@ -54,6 +54,7 @@ class GraphController(var pane: Pane){
             vertex.centerY = newY
         }
         vertex.onMouseClicked = EventHandler {
+            it.consume()
             if (it.isStillSincePress) {
                 return@EventHandler
             }
