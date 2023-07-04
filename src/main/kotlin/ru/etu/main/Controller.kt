@@ -63,6 +63,9 @@ class Controller : Initializable {
     @FXML
     private lateinit var GraphArea: Pane
 
+    @FXML
+    private lateinit var questionButton: Button
+
 
     @FXML
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
@@ -76,6 +79,7 @@ class Controller : Initializable {
         assert(closeButton != null) { "fx:id=\"closeButton\" was not injected: check your FXML file 'main.fxml'." }
         assert(collapseButton != null) {"fx:id=\"collapseButton\" was not injected: check your FXML file 'main.fxml'." }
         assert(topBar != null) { "fx:id=\"topBar\" was not injected: check your FXML file 'main.fxml'." }
+        assert(questionButton != null) {"fx:id=\"questionButton\" was not injected: check your FXML file 'main.fxml'." }
 
         graph = GraphController(GraphArea)
         closeButton.onMousePressed = EventHandler {
