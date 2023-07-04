@@ -66,6 +66,10 @@ class Controller : Initializable {
     @FXML
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
         assert(MainPane != null) {"fx:id=\"MainPane\" was not injected: check your FXML file 'main.fxml'." }
+        assert(DialogeInput != null) {"fx:id=\"DialogeInput\" was not injected: check your FXML file 'main.fxml'." }
+        assert(Reset != null) {"fx:id=\"Reset\" was not injected: check your FXML file 'main.fxml'." }
+        assert(StartDijkstra != null) {"fx:id=\"StartDijkstra\" was not injected: check your FXML file 'main.fxml'." }
+        assert(Switcher != null) {"fx:id=\"Switcher\" was not injected: check your FXML file 'main.fxml'." }
         assert(GraphArea != null) {"fx:id=\"GraphArea\" was not injected: check your FXML file 'main.fxml'." }
         assert(Menu != null) {"fx:id=\"Menu\" was not injected: check your FXML file 'main.fxml'." }
         assert(closeButton != null) { "fx:id=\"closeButton\" was not injected: check your FXML file 'main.fxml'." }
