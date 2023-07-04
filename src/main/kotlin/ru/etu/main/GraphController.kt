@@ -2,13 +2,13 @@ package ru.etu.main
 
 import javafx.event.EventHandler
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
 import javafx.scene.Cursor
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
+import javafx.scene.control.TextInputDialog
+import javafx.scene.input.MouseButton
 import javafx.scene.layout.Pane
-import javafx.scene.text.Text
-import java.net.URL
+import javafx.stage.StageStyle
 import java.util.*
 
 class GraphController(var pane: Pane){
@@ -38,7 +38,7 @@ class GraphController(var pane: Pane){
     }
 
     fun isNameAvailable(name: String) : Boolean {
-        return names[name] ?: false
+        return names[name] ?: true
     }
 
     private fun getName(): String{
@@ -82,10 +82,23 @@ class GraphController(var pane: Pane){
         }
         vertex.onMouseClicked = EventHandler {
             it.consume()
+            if (it.button != MouseButton.SECONDARY) return@EventHandler
             contextMenu.show(pane, it.screenX, it.screenY)
             renameOption.onAction = EventHandler {
                 if (contextMenu.isShowing) {
                     contextMenu.hide()
+                }
+                val dialogRenameVertex = TextInputDialog()
+                dialogRenameVertex.title = "Rename vertex"
+                dialogRenameVertex.headerText = "Enter vertex name:"
+                dialogRenameVertex.initStyle(StageStyle.UNDECORATED)
+                dialogRenameVertex.isResizable = false
+                dialogRenameVertex.contentText = "Name:"
+                val newName: Optional<String> = dialogRenameVertex.showAndWait()
+                if (newName.isEmpty) return@EventHandler
+                if (isNameAvailable(newName.get())){
+                    names[newName.get()] = false
+                    vertex.updateName(newName.get())
                 }
             }
             deleteOption.onAction = EventHandler {

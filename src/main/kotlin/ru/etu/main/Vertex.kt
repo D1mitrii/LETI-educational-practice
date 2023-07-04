@@ -30,6 +30,12 @@ class Vertex(var name: String, x: Double, y: Double) : Circle() {
         this.centerName()
     }
 
+    fun updateName(name: String) {
+        this.name = name
+        this.text.text = name
+        this.centerName()
+    }
+
     private fun centerName(){
         val height = text.boundsInLocal.height
         val width = text.boundsInLocal.width
