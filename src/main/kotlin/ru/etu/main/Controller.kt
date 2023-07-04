@@ -5,8 +5,6 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Button
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.MenuItem
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
@@ -15,12 +13,17 @@ import java.net.URL
 import java.util.*
 import kotlin.system.exitProcess
 
+enum class WorkspaceSTATES{
+    VERTEX,
+    EDGE
+}
+
 class Controller : Initializable {
 
 
     private var x: Double = 0.0
     private var y: Double = 0.0
-    private var flag : Boolean = true
+    private var flag : WorkspaceSTATES = WorkspaceSTATES.VERTEX
 
 
     private lateinit var graph: GraphController
@@ -82,6 +85,7 @@ class Controller : Initializable {
         assert(questionButton != null) {"fx:id=\"questionButton\" was not injected: check your FXML file 'main.fxml'." }
 
         graph = GraphController(GraphArea)
+
         closeButton.onMousePressed = EventHandler {
             it.consume()
             Platform.exit()
@@ -101,24 +105,31 @@ class Controller : Initializable {
             stage.y = (it.screenY - y)
         }
 
-        Switcher.onMousePressed = EventHandler {
-            flag = if (flag) {
+        Switcher.onAction = EventHandler {
+            it.consume()
+            flag = if (flag == WorkspaceSTATES.VERTEX) {
                 Switcher.text = "Add Vertex"
-                false
+                WorkspaceSTATES.EDGE
             } else {
                 Switcher.text = "Add Edge"
-                true
+                WorkspaceSTATES.VERTEX
             }
+            graph.state = flag
         }
 
 
         GraphArea.onMouseClicked = EventHandler {
+            it.consume()
             if (!it.isStillSincePress)
                 return@EventHandler
-            if (it.button == MouseButton.PRIMARY){
+            if (it.button == MouseButton.PRIMARY && flag.equals(WorkspaceSTATES.VERTEX)){
                 val vertex = graph.createVertex(it.sceneX, it.sceneY) ?: return@EventHandler
-                graph.drawVertex(GraphArea, vertex)
+                graph.drawVertex(vertex)
             }
+        }
+        Reset.onMousePressed = EventHandler {
+            it.consume()
+            graph.clear()
         }
     }
 }

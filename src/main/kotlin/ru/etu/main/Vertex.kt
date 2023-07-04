@@ -15,6 +15,7 @@ class Vertex(var name: String, x: Double, y: Double) : Circle() {
         this.centerY = y
         this.radius = 25.0
         this.id = "Vertex"
+
         this.text = Text(name)
         this.text.id = "VertexName"
         this.text.boundsType = TextBoundsType.VISUAL
@@ -27,6 +28,7 @@ class Vertex(var name: String, x: Double, y: Double) : Circle() {
         this.text.onMouseExited = EventHandler {
             this.isHover = false
         }
+
         this.centerName()
     }
 
@@ -49,14 +51,6 @@ class Vertex(var name: String, x: Double, y: Double) : Circle() {
         edges.forEach {
             it.moveEdge()
         }
-    }
-
-    fun addEdge(edge: Edge){
-        edges.add(edge)
-    }
-
-    fun deleteEdge(edge: Edge){
-        edges.remove(edge)
     }
 
 }

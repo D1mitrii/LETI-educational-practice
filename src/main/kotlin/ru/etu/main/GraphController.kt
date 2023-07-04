@@ -19,6 +19,16 @@ class GraphController(var pane: Pane){
     @FXML
     private var deleteOption: MenuItem = MenuItem("Delete")
 
+    var state: WorkspaceSTATES = WorkspaceSTATES.VERTEX
+        set(value) {
+            field = value
+            vertexFirst = null
+            vertexSecond = null
+        }
+
+    var vertexFirst: Vertex? = null
+    var vertexSecond: Vertex? = null
+
 
     @FXML
     private var contextMenu: ContextMenu = ContextMenu(renameOption, deleteOption)
@@ -28,6 +38,7 @@ class GraphController(var pane: Pane){
     private val height: Double = 624.0
 
     private val vertexArray: MutableList<Vertex> = mutableListOf()
+    private val edgeArray: MutableList<Edge> = mutableListOf()
 
     private val names: MutableMap<String, Boolean> = mutableMapOf()
 
@@ -51,6 +62,18 @@ class GraphController(var pane: Pane){
         }
         return "-"
     }
+
+    private fun checkCoordinate(cord: Double, max: Double) : Double{
+        var newCord = cord
+        if (cord < 0){
+            newCord = 0.0
+        }
+        else if (cord >= max){
+            newCord = max
+        }
+        return newCord
+    }
+
     //TODO Добавить возможность передвигать за название вершины (мб вершину сделать как Group)
     fun createVertex(x: Double, y: Double) : Vertex? {
         val name = getName()
@@ -64,25 +87,19 @@ class GraphController(var pane: Pane){
             it.consume()
             if (!it.isPrimaryButtonDown)
                 return@EventHandler
-            var newX = it.sceneX - startArea.first
-            if (newX < 0){
-                newX = 0.0
-            }
-            else if (newX >= width){
-                newX = width
-            }
-            var newY = it.sceneY - startArea.second
-            if (newY < 0){
-                newY = 0.0
-            }
-            else if (newY >= height){
-                newY = height
-            }
+            val newX = checkCoordinate(it.sceneX - startArea.first, width)
+            val newY = checkCoordinate(it.sceneY - startArea.second, height)
             vertex.changePosition(newX, newY)
         }
         vertex.onMouseClicked = EventHandler {
             it.consume()
+
+            if (it.button == MouseButton.PRIMARY && state == WorkspaceSTATES.EDGE){
+                selectVertex(vertex)
+                return@EventHandler
+            }
             if (it.button != MouseButton.SECONDARY) return@EventHandler
+
             contextMenu.show(pane, it.screenX, it.screenY)
             renameOption.onAction = EventHandler {
                 if (contextMenu.isShowing) {
@@ -113,17 +130,57 @@ class GraphController(var pane: Pane){
         return vertex
     }
 
-    fun drawVertex(pane: Pane, vertex: Vertex) {
+    fun drawVertex(vertex: Vertex) {
         pane.children.addAll(vertex, vertex.text)
     }
 
     fun deleteVertex(vertex: Vertex){
         names[vertex.name] = true
-        vertex.edges.forEach {
-            it.start!!.deleteEdge(it)
-            it.end!!.deleteEdge(it)
-            pane.children.removeAll(it)
+        for (edge in vertex.edges){
+            pane.children.remove(edge)
+            edgeArray.remove(edge)
         }
         pane.children.removeAll(vertex, vertex.text)
+        vertexArray.remove(vertex)
+    }
+
+    private fun selectVertex(vertex: Vertex){
+        println(edgeArray)
+        if (vertex.id == "VertexSelected") {
+            vertex.id = "Vertex"
+            return
+        }
+        vertex.id = "VertexSelected"
+        if (vertexFirst == null){
+            vertexFirst = vertex
+            return
+        }
+        vertexSecond = vertex
+
+        val newEdge = Edge()
+        newEdge.addStart(vertexFirst!!)
+        newEdge.addEnd(vertexSecond!!)
+        edgeArray.add(newEdge)
+
+        vertexFirst!!.edges.add(newEdge)
+        vertexSecond!!.edges.add(newEdge)
+
+        vertexFirst!!.id = "Vertex"
+        vertexSecond!!.id = "Vertex"
+        vertexFirst = null
+        vertexSecond = null
+        drawGraph()
+    }
+
+    fun drawGraph(){
+        pane.children.clear()
+        edgeArray.forEach { pane.children.addAll(it) }
+        vertexArray.forEach { pane.children.addAll(it, it.text) }
+    }
+
+    fun clear(){
+        pane.children.clear()
+        edgeArray.clear()
+        vertexArray.clear()
     }
 }
