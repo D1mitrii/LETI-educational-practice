@@ -28,6 +28,20 @@ class Controller : Initializable {
     @FXML
     private lateinit var MainPane: AnchorPane
 
+    @FXML
+    private lateinit var DialogeInput: Button
+
+
+    @FXML
+    private lateinit var Reset: Button
+
+
+    @FXML
+    private lateinit var StartDijkstra: Button
+
+    @FXML
+    private lateinit var Switcher: Button
+
 
     @FXML
     private lateinit var closeButton: Button
