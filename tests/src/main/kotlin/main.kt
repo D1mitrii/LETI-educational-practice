@@ -2,25 +2,24 @@ import java.util.Scanner
 
 val scan = Scanner(System.`in`)
 
-class Edge(var next: Vertex, var weight: Int){
+class Edge(var weight: Int){
     fun change_weight(new_weight: Int){
         this.weight = new_weight
     }
 }
 
-class Vertex(var name : Char){
-    var edges = mutableListOf<Edge>()
+class Vertex(){
+    var edges = mutableMapOf<Char, Edge>()
     var d: Int = Int.MAX_VALUE
     var used: Boolean = false
-    var came_fron : Char? = null
 
-    fun add_edge(next : Vertex, weight: Int){
-        this.edges.add(Edge(next, weight))
+    fun add_edge(next : Char, weight: Int){
+        this.edges.put(next, Edge(weight))
     }
 
-    fun delete_edge(ver: Vertex){
-        for (elem in edges)
-            if (elem.next == ver) {
+    fun delete_edge(ver: Char){
+        for (elem in edges.keys)
+            if (elem == ver) {
                 edges.remove(elem)
                 break
             }
@@ -28,86 +27,79 @@ class Vertex(var name : Char){
 
 }
 
-class Graph{
+class Graph {
     var vertices = mutableMapOf<Char, Vertex>()
-    var start_vertex: Vertex? = null
-    var destination_vertex: Vertex? = null
+    var start_vertex: Char? = null
 
 
-    fun add_vertex(name: Char){
-        this.vertices.put(name, Vertex(name))
+    fun add_vertex(name: Char) {
+        this.vertices.put(name, Vertex())
     }
 
-    fun delete_vertex(name: Char){
+    fun delete_vertex(name: Char) {
         for (elem in vertices.values)
-            elem.delete_edge(vertices[name]!!)
+            elem.delete_edge(name)
         vertices.remove(name)
     }
 
-    fun delete_edge(name_from : Char, name_to : Char){
-        vertices[name_from]!!.delete_edge(vertices[name_to]!!)
+    fun delete_edge(name_from: Char, name_to: Char) {
+        vertices[name_from]!!.delete_edge(name_to)
     }
 
-    fun add_edge(name_from : Char, name_to : Char, weight: Int){
-        vertices[name_from]!!.add_edge(vertices[name_to]!!, weight)
+    fun add_edge(name_from: Char, name_to: Char, weight: Int) {
+        vertices[name_from]!!.add_edge(name_to, weight)
     }
 
-    fun add_symmetric_edge(name_from : Char, name_to : Char, weight: Int){
-        vertices[name_from]!!.add_edge(vertices[name_to]!!, weight)
-        vertices[name_to]!!.add_edge(vertices[name_from]!!, weight)
+    fun add_symmetric_edge(name_from: Char, name_to: Char, weight: Int) {
+        vertices[name_from]!!.add_edge(name_to, weight)
+        vertices[name_to]!!.add_edge(name_from, weight)
     }
 
-    fun set_start(name : Char){
-        this.start_vertex = vertices[name]
+    fun set_start(name: Char) {
+        this.start_vertex = name
     }
 
-    fun set_destination(name : Char){
-        this.destination_vertex = vertices[name]
-    }
-
-    fun rename_vertex(prev : Char, new : Char){
+    fun rename_vertex(prev: Char, new: Char) {
         val buff = vertices[prev] ?: return
         vertices.remove(prev)
         vertices.put(new, buff)
-        vertices[new]!!.name = new
     }
 
-    fun dijkstra(){
-        start_vertex!!.d = 0
-        for(i in vertices.values){
-            var v : Vertex? = null
-            for (j in vertices.values){
-                if(!j.used && (v == null || j.d < v.d))
+    fun dijkstra() {
+        vertices[start_vertex]!!.d = 0
+        for (i in vertices.values) {
+            var v: Vertex? = null
+            for (j in vertices.values) {
+                if (!j.used && (v == null || j.d < v.d))
                     v = j
             }
             if (v!!.d == Int.MAX_VALUE)
                 break
             v.used = true
-            for (e in v.edges){
-                if (v.d + e.weight < e.next.d) {
-                    e.next.d = v.d + e.weight
-                    e.next.came_fron = v.name
+            for (e in v.edges.keys) {
+                if (v.d + v.edges[e]!!.weight < vertices[e]!!.d) {
+                    vertices[e]!!.d = v.d + v.edges[e]!!.weight
                 }
             }
         }
     }
 
-    fun print_res(){
-        if (destination_vertex!!.d == Int.MAX_VALUE){
-            print("oo")
-            return
-        }
-        var res = mutableListOf<Char>()
-        var elem = destination_vertex
-        while (elem!!.name != start_vertex!!.name){
-            res.add(elem!!.name)
-            elem = vertices[elem.came_fron]
-        }
-        res.add(start_vertex!!.name)
-        print("${res.reversed()} - ${destination_vertex!!.d}")
+    fun edge_change_weight(from : Char, to : Char, new_weight: Int){
+        vertices[from]!!.edges[to]?.change_weight(new_weight)
+    }
+
+    fun print_res() {
+        print("rasstoyaniya from vertex ${start_vertex}\n")
+        for (elem in vertices.keys)
+            print("$elem\t")
+        print("\n")
+        for (elem in vertices.values)
+            print(when{
+                elem.d == Int.MAX_VALUE -> "oo"
+                else -> "${elem.d}\t"
+            })
     }
 }
-
 fun main(){
     // здесь тест примера с википедии https://ru.wikipedia.org/wiki/Алгоритм_Дейкстры
     var gr = Graph()
@@ -135,7 +127,6 @@ fun main(){
     gr.delete_vertex('7')
 
     gr.set_start('1')
-    gr.set_destination('5')
 
     gr.dijkstra()
     gr.print_res()
