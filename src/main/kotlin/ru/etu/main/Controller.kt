@@ -98,15 +98,12 @@ class Controller : Initializable {
         }
 
         Switcher.onMousePressed = EventHandler {
-            if (flag)
-            {
-                Switcher.setText("Add Vertex")
-                flag = false
-            }
-            else
-            {
-                Switcher.setText("Add Edge")
-                flag = true
+            flag = if (flag) {
+                Switcher.text = "Add Vertex"
+                false
+            } else {
+                Switcher.text = "Add Edge"
+                true
             }
         }
 

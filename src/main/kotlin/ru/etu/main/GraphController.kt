@@ -97,6 +97,7 @@ class GraphController(var pane: Pane){
                 val newName: Optional<String> = dialogRenameVertex.showAndWait()
                 if (newName.isEmpty) return@EventHandler
                 if (isNameAvailable(newName.get())){
+                    names[vertex.name]
                     names[newName.get()] = false
                     vertex.updateName(newName.get())
                 }
