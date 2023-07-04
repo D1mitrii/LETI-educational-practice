@@ -20,6 +20,7 @@ class Controller : Initializable {
 
     private var x: Double = 0.0
     private var y: Double = 0.0
+    private var flag : Boolean = true
 
 
     private lateinit var graph: GraphController
@@ -94,6 +95,19 @@ class Controller : Initializable {
             val stage = (it.source as AnchorPane).scene.window
             stage.x = (it.screenX - x)
             stage.y = (it.screenY - y)
+        }
+
+        Switcher.onMousePressed = EventHandler {
+            if (flag)
+            {
+                Switcher.setText("Add Vertex")
+                flag = false
+            }
+            else
+            {
+                Switcher.setText("Add Edge")
+                flag = true
+            }
         }
 
 

@@ -22,7 +22,7 @@
                         <Insets bottom="65.0" left="40.0" right="40.0" top="78.0" />
                      </VBox.margin>
                   </Button>
-                  <Button fx:id="Switcher" minHeight="60.0" minWidth="170.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" text="Switcher">
+                  <Button fx:id="Switcher" minHeight="60.0" minWidth="170.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="250.0" text="Add Edge">
                      <VBox.margin>
                         <Insets bottom="65.0" left="40.0" right="40.0" />
                      </VBox.margin>
