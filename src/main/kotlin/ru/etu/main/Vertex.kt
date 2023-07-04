@@ -5,10 +5,10 @@ import javafx.scene.shape.Circle
 import javafx.scene.text.Text
 import javafx.scene.text.TextBoundsType
 
-class Vertex(name: String, x: Double, y: Double) : Circle() {
+class Vertex(var name: String, x: Double, y: Double) : Circle() {
 
     var text: Text
-    private val edges: MutableList<Edge> = mutableListOf()
+    val edges: MutableList<Edge> = mutableListOf()
 
     init {
         this.centerX = x
@@ -43,6 +43,14 @@ class Vertex(name: String, x: Double, y: Double) : Circle() {
         edges.forEach {
             it.moveEdge()
         }
+    }
+
+    fun addEdge(edge: Edge){
+        edges.add(edge)
+    }
+
+    fun deleteEdge(edge: Edge){
+        edges.remove(edge)
     }
 
 }

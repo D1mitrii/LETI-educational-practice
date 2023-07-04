@@ -92,6 +92,7 @@ class GraphController(var pane: Pane){
                 if (contextMenu.isShowing) {
                     contextMenu.hide()
                 }
+                deleteVertex(vertex)
             }
         }
         vertexArray.add(vertex)
@@ -100,5 +101,15 @@ class GraphController(var pane: Pane){
 
     fun drawVertex(pane: Pane, vertex: Vertex) {
         pane.children.addAll(vertex, vertex.text)
+    }
+
+    fun deleteVertex(vertex: Vertex){
+        names[vertex.name] = true
+        vertex.edges.forEach {
+            it.start!!.deleteEdge(it)
+            it.end!!.deleteEdge(it)
+            pane.children.removeAll(it)
+        }
+        pane.children.removeAll(vertex, vertex.text)
     }
 }
