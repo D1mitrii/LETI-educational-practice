@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Pacifico&display=swap');
 
 .background{
     -fx-background-color:  #84A7A1;
@@ -30,9 +31,19 @@
 }
 
 #Vertex{
-    -fx-fill: #ff0000;
+    -fx-fill: #776969;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0, 0, 0);
+    -fx-stroke: black;
 }
 
 #Vertex:hover{
     -fx-fill: #AAFF00FF;
+    -fx-text-fill: black;
+}
+
+#VertexName{
+    -fx-fill: white;
+    -fx-font-family: "JetBrains Mono Medium";
+    -fx-font-weight: 500;
+    -fx-font-size: 14px;
 }
