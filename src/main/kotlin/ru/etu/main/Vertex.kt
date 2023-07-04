@@ -16,6 +16,7 @@ class Vertex(name: String, x: Double, y: Double) : Circle() {
         this.radius = 25.0
         this.id = "Vertex"
         this.text = Text(name)
+        this.text.id = "VertexName"
         this.text.boundsType = TextBoundsType.VISUAL
         this.text.onMouseClicked = EventHandler {
             it.consume()
@@ -32,7 +33,6 @@ class Vertex(name: String, x: Double, y: Double) : Circle() {
     private fun centerName(){
         val height = text.boundsInLocal.height
         val width = text.boundsInLocal.width
-        println(" $height $width ")
         text.relocate(this.centerX - width/2, this.centerY - height/2)
     }
 
@@ -40,6 +40,9 @@ class Vertex(name: String, x: Double, y: Double) : Circle() {
         this.centerX = newX
         this.centerY = newY
         centerName()
+        edges.forEach {
+            it.moveEdge()
+        }
     }
 
 }

@@ -61,6 +61,7 @@ class GraphController(var pane: Pane){
             vertex.cursor = Cursor.HAND
         }
         vertex.onMouseDragged = EventHandler {
+            it.consume()
             if (!it.isPrimaryButtonDown)
                 return@EventHandler
             var newX = it.sceneX - startArea.first
