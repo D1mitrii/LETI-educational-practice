@@ -74,7 +74,6 @@ class GraphController(var pane: Pane){
         return newCord
     }
 
-    //TODO Добавить возможность передвигать за название вершины (мб вершину сделать как Group)
     fun createVertex(x: Double, y: Double) : Vertex? {
         val name = getName()
         if (name == "-") return null
@@ -126,6 +125,7 @@ class GraphController(var pane: Pane){
                 deleteVertex(vertex)
             }
         }
+        vertex.text.onMouseDragged = vertex.onMouseDragged
         vertexArray.add(vertex)
         return vertex
     }
