@@ -1,8 +1,10 @@
 package ru.etu.main
 
 import javafx.application.Platform
+import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.Button
 import javafx.scene.control.ContextMenu
@@ -14,6 +16,7 @@ import javafx.stage.Stage
 import java.net.URL
 import java.util.*
 import kotlin.system.exitProcess
+import ru.etu.main.InputWindow
 
 class Controller : Initializable {
 
@@ -108,6 +111,36 @@ class Controller : Initializable {
             } else {
                 Switcher.text = "Add Edge"
                 true
+            }
+        }
+
+        DialogeInput.onMousePressed = EventHandler {
+            @Override
+            fun openInputWindow(event: ActionEvent)
+            {
+                val fxmlLoader = FXMLLoader(Controller::class.java.getResource("InputWindow.fxml"))
+
+                val inputWindow : InputWindow
+
+                Scene secondScene = new Scene(secondaryLayout, 230, 100)
+
+                // New window (Stage)
+                Stage newWindow = new Stage()
+                newWindow.setTitle("Second Stage");
+                newWindow.setScene(secondScene)
+
+                // Specifies the modality for new window.
+                newWindow.initModality(Modality.WINDOW_MODAL)
+
+                // Specifies the owner Window (parent) for new window
+                newWindow.initOwner(primaryStage)
+
+                // Set position of second window, related to primary window.
+                newWindow.setX(primaryStage.getX() + 200)
+                newWindow.setY(primaryStage.getY() + 100)
+
+                newWindow.show()
+            }
             }
         }
 
