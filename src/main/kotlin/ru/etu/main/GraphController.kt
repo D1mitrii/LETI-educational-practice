@@ -22,12 +22,10 @@ class GraphController(var pane: Pane){
     var state: WorkspaceSTATES = WorkspaceSTATES.VERTEX
         set(value) {
             field = value
-            vertexFirst = null
-            vertexSecond = null
+            selectedVertex = null
         }
 
-    var vertexFirst: Vertex? = null
-    var vertexSecond: Vertex? = null
+    private var selectedVertex: Vertex? = null
 
 
     @FXML
@@ -146,29 +144,33 @@ class GraphController(var pane: Pane){
 
     private fun selectVertex(vertex: Vertex){
         println(edgeArray)
+        // if it already selected, unselect
         if (vertex.id == "VertexSelected") {
             vertex.id = "Vertex"
+            selectedVertex = null
             return
         }
+        // check if it's first time selection
         vertex.id = "VertexSelected"
-        if (vertexFirst == null){
-            vertexFirst = vertex
+        if (selectedVertex == null){
+            selectedVertex = vertex
             return
         }
-        vertexSecond = vertex
+        // on second selected vertex add edge
 
         val newEdge = Edge()
-        newEdge.addStart(vertexFirst!!)
-        newEdge.addEnd(vertexSecond!!)
+        newEdge.addStart(selectedVertex!!)
+        newEdge.addEnd(vertex)
         edgeArray.add(newEdge)
 
-        vertexFirst!!.edges.add(newEdge)
-        vertexSecond!!.edges.add(newEdge)
+        selectedVertex!!.edges.add(newEdge)
+        vertex.edges.add(newEdge)
 
-        vertexFirst!!.id = "Vertex"
-        vertexSecond!!.id = "Vertex"
-        vertexFirst = null
-        vertexSecond = null
+        // Edge created now unselect vertexes
+        selectedVertex!!.id = "Vertex"
+        vertex.id = "Vertex"
+        selectedVertex = null
+
         drawGraph()
     }
 
