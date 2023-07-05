@@ -11,6 +11,10 @@ import javafx.scene.layout.Pane
 import javafx.stage.StageStyle
 import java.util.*
 
+
+const val WorkspaceWIDTH = 980.0
+const val WorkspaceHEIGHT = 624.0
+
 class GraphController(var pane: Pane){
 
     @FXML
@@ -32,8 +36,6 @@ class GraphController(var pane: Pane){
     private var contextMenu: ContextMenu = ContextMenu(renameOption, deleteOption)
 
     private val startArea: Pair<Double, Double> = Pair(pane.layoutX, pane.layoutY)
-    private val width: Double = 980.0
-    private val height: Double = 624.0
 
     private val vertexArray: MutableList<Vertex> = mutableListOf()
     private val edgeArray: MutableList<Edge> = mutableListOf()
@@ -89,8 +91,8 @@ class GraphController(var pane: Pane){
             it.consume()
             if (!it.isPrimaryButtonDown)
                 return@EventHandler
-            val newX = checkCoordinate(it.sceneX - startArea.first, width)
-            val newY = checkCoordinate(it.sceneY - startArea.second, height)
+            val newX = checkCoordinate(it.sceneX - startArea.first, WorkspaceWIDTH)
+            val newY = checkCoordinate(it.sceneY - startArea.second, WorkspaceHEIGHT)
             vertex.changePosition(newX, newY)
         }
         vertex.onMouseClicked = EventHandler {
@@ -131,11 +133,12 @@ class GraphController(var pane: Pane){
         vertex.text.onMouseDragged = vertex.onMouseDragged
         vertexArray.add(vertex)
         drawVertex(vertex)
+        vertexArray.reverse()
         return vertex
     }
 
     fun drawVertex(vertex: Vertex) {
-        pane.children.addAll(vertex, vertex.text)
+        pane.children.addAll(vertex, vertex.text, vertex.minPath)
     }
 
     fun deleteVertex(vertex: Vertex){
