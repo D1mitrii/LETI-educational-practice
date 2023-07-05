@@ -123,8 +123,7 @@ class Controller : Initializable {
             if (!it.isStillSincePress)
                 return@EventHandler
             if (it.button == MouseButton.PRIMARY && flag.equals(WorkspaceSTATES.VERTEX)){
-                val vertex = graph.createVertex(it.sceneX, it.sceneY) ?: return@EventHandler
-                graph.drawVertex(vertex)
+                graph.createVertex(it.sceneX, it.sceneY) ?: return@EventHandler
             }
         }
         Reset.onMousePressed = EventHandler {

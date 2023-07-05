@@ -41,13 +41,18 @@ class GraphController(var pane: Pane){
     private val names: MutableMap<String, Boolean> = mutableMapOf()
 
     init {
-        for (ch in 'A'..'Z'){
-            names[ch.toString()] = true
-        }
+        freeNames()
     }
 
     fun isNameAvailable(name: String) : Boolean {
         return names[name] ?: true
+    }
+
+    private fun freeNames(){
+        names.clear()
+        for (ch in 'A'..'Z'){
+            names[ch.toString()] = true
+        }
     }
 
     private fun getName(): String{
@@ -125,6 +130,7 @@ class GraphController(var pane: Pane){
         }
         vertex.text.onMouseDragged = vertex.onMouseDragged
         vertexArray.add(vertex)
+        drawVertex(vertex)
         return vertex
     }
 
@@ -135,7 +141,7 @@ class GraphController(var pane: Pane){
     fun deleteVertex(vertex: Vertex){
         names[vertex.name] = true
         for (edge in vertex.edges){
-            pane.children.remove(edge)
+            pane.children.removeAll(edge, edge.weightText)
             edgeArray.remove(edge)
         }
         pane.children.removeAll(vertex, vertex.text)
@@ -176,7 +182,7 @@ class GraphController(var pane: Pane){
 
     fun drawGraph(){
         pane.children.clear()
-        edgeArray.forEach { pane.children.addAll(it) }
+        edgeArray.forEach { pane.children.addAll(it, it.weightText) }
         vertexArray.forEach { pane.children.addAll(it, it.text) }
     }
 
@@ -184,5 +190,6 @@ class GraphController(var pane: Pane){
         pane.children.clear()
         edgeArray.clear()
         vertexArray.clear()
+        freeNames()
     }
 }
