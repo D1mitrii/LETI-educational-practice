@@ -135,8 +135,7 @@ class Controller : Initializable {
             if (!it.isStillSincePress)
                 return@EventHandler
             if (it.button == MouseButton.PRIMARY){
-                val vertex = graph.createVertex(it.sceneX, it.sceneY) ?: return@EventHandler
-                graph.drawVertex(vertex)
+                graph.createVertex(it.sceneX, it.sceneY) ?: return@EventHandler
             }
         }
     }

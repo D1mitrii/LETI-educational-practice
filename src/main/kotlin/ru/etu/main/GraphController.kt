@@ -109,11 +109,12 @@ class GraphController(var pane: Pane){
                 deleteVertex(vertex)
             }
         }
+        drawVertex(vertex)
         vertexArray.add(vertex)
         return vertex
     }
 
-    fun drawVertex(pane: Pane, vertex: Vertex) {
+    fun drawVertex(vertex: Vertex) {
         pane.children.addAll(vertex, vertex.text)
     }
 
