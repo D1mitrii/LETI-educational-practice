@@ -77,12 +77,12 @@ class InputWindow {
 
                     alert.showAndWait()
                     }
-                if (elems[2].toInt() < 0){
+                if (elems[2].toInt() !in 0..50){
                     val alert = Alert(AlertType.ERROR)
 
                     alert.title = "Error alert"
                     alert.headerText = "Edge value error!"
-                    alert.contentText = "Вес ребра не может быть отрицательным!"
+                    alert.contentText = "Вес ребра задан неверно!"
 
                     alert.showAndWait()
                 }
