@@ -1,26 +1,36 @@
 import java.util.Scanner
 
+import javafx.application.Application
+import javafx.fxml.FXMLLoader
+import javafx.scene.Scene
+import javafx.stage.Stage
+import javafx.stage.StageStyle
+
 val scan = Scanner(System.`in`)
 
-class Edge(var weight: Int){
-    fun change_weight(new_weight: Int){
-        this.weight = new_weight
-    }
-}
+data class Edge(var start: Vertex, var end: Vertex, var weight: Int)
 
 class Vertex(){
-    var edges = mutableMapOf<Char, Edge>()
+    var edges = mutableListOf<Edge>()
     var d: Int = Int.MAX_VALUE
     var used: Boolean = false
 
-    fun add_edge(next : Char, weight: Int){
-        this.edges.put(next, Edge(weight))
+    fun add_edge(next : Vertex, weight: Int){
+        this.edges.add(Edge(this, next, weight))
     }
 
-    fun delete_edge(ver: Char){
-        for (elem in edges.keys)
-            if (elem == ver) {
+    fun delete_edge(ver: Vertex){
+        for (elem in edges)
+            if (elem.end == ver) {
                 edges.remove(elem)
+                break
+            }
+    }
+
+    fun change_weight(end: Vertex?, new_weight: Int){
+        for (elem in edges)
+            if (elem.end == end) {
+                elem.weight = new_weight
                 break
             }
     }
@@ -38,21 +48,21 @@ class Graph {
 
     fun delete_vertex(name: Char) {
         for (elem in vertices.values)
-            elem.delete_edge(name)
+            elem.delete_edge(vertices[name]!!)
         vertices.remove(name)
     }
 
     fun delete_edge(name_from: Char, name_to: Char) {
-        vertices[name_from]!!.delete_edge(name_to)
+        vertices[name_from]!!.delete_edge(vertices[name_to]!!)
     }
 
     fun add_edge(name_from: Char, name_to: Char, weight: Int) {
-        vertices[name_from]!!.add_edge(name_to, weight)
+        vertices[name_from]!!.add_edge(vertices[name_to]!!, weight)
     }
 
     fun add_symmetric_edge(name_from: Char, name_to: Char, weight: Int) {
-        vertices[name_from]!!.add_edge(name_to, weight)
-        vertices[name_to]!!.add_edge(name_from, weight)
+        vertices[name_from]!!.add_edge(vertices[name_to]!!, weight)
+        vertices[name_to]!!.add_edge(vertices[name_from]!!, weight)
     }
 
     fun set_start(name: Char) {
@@ -76,16 +86,16 @@ class Graph {
             if (v!!.d == Int.MAX_VALUE)
                 break
             v.used = true
-            for (e in v.edges.keys) {
-                if (v.d + v.edges[e]!!.weight < vertices[e]!!.d) {
-                    vertices[e]!!.d = v.d + v.edges[e]!!.weight
+            for (e in v.edges) {
+                if (v.d + e.weight < e.end.d) {
+                    e.end.d = v.d + e.weight
                 }
             }
         }
     }
 
     fun edge_change_weight(from : Char, to : Char, new_weight: Int){
-        vertices[from]!!.edges[to]?.change_weight(new_weight)
+        vertices[from]!!.change_weight(vertices[to], new_weight)
     }
 
     fun print_res() {
@@ -101,6 +111,7 @@ class Graph {
     }
 }
 fun main(){
+
     // здесь тест примера с википедии https://ru.wikipedia.org/wiki/Алгоритм_Дейкстры
     var gr = Graph()
     gr.add_vertex('1')
