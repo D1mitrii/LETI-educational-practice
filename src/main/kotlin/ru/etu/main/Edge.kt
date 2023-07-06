@@ -5,21 +5,21 @@ import javafx.scene.text.Text
 
 class Edge : Line() {
 
-    private var weight: Double = 0.0
+    private var weight: Int = 0
         set(value) {
             field = value
             this.weightText.text = value.toString()
         }
     var start: Vertex? = null
     var end: Vertex? = null
-    var weightText: Text = Text("0")
+    var weightText: Text = Text("$weight")
 
     init {
         this.id = "Edge"
-        weightText.id = "VertexName"
+        weightText.id = "EdgeWeight"
     }
 
-    fun changeWeight(weight: Double): Boolean{
+    fun changeWeight(weight: Int): Boolean{
         if (weight >= 0){
             this.weight = weight
             return true
@@ -28,7 +28,7 @@ class Edge : Line() {
     }
 
     private fun getMiddle(): Pair<Double, Double>{
-        return Pair<Double, Double>((startX + endX) / 2, (startY + endY) / 2)
+        return Pair((startX + endX) / 2, (startY + endY) / 2)
     }
 
     fun addStart(vertex: Vertex){
