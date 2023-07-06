@@ -8,11 +8,13 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
+import javafx.scene.control.TextInputDialog
 import javafx.scene.input.InputEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
+import javafx.stage.StageStyle
 import java.net.URL
 import java.util.*
 import java.util.concurrent.TimeUnit

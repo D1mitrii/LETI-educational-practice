@@ -9,9 +9,10 @@ import javafx.scene.control.Dialog
 import javafx.scene.control.MenuItem
 import javafx.scene.control.TextInputDialog
 import javafx.scene.input.MouseButton
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
+import javafx.stage.Stage
 import javafx.stage.StageStyle
-import java.lang.Character.UnicodeBlock
 import java.util.*
 
 
@@ -22,9 +23,23 @@ class GraphController(var pane: Pane){
 
     @FXML
     private var renameOption: MenuItem = MenuItem("Rename")
+    @FXML
+    private var reweightOption: MenuItem = MenuItem("Change Weight")
+    @FXML
+    private var deleteVertexOption: MenuItem = MenuItem("Delete")
+    @FXML
+    private var deleteEdgeOption: MenuItem = MenuItem("Delete")
 
     @FXML
-    private var deleteOption: MenuItem = MenuItem("Delete")
+    private var contextMenuVertex: ContextMenu = ContextMenu(renameOption, deleteVertexOption)
+
+    @FXML
+    private var contextMenuEdge: ContextMenu = ContextMenu(reweightOption, deleteEdgeOption)
+
+    @FXML
+    private var dialog: TextInputDialog = TextInputDialog()
+    @FXML
+    private var alert: Alert = Alert(Alert.AlertType.WARNING)
 
     var state: WorkspaceSTATES = WorkspaceSTATES.VERTEX
         set(value) {
@@ -33,10 +48,6 @@ class GraphController(var pane: Pane){
         }
 
     private var selectedVertex: Vertex? = null
-
-
-    @FXML
-    private var contextMenu: ContextMenu = ContextMenu(renameOption, deleteOption)
 
     private val startArea: Pair<Double, Double> = Pair(pane.layoutX, pane.layoutY)
 
@@ -47,6 +58,12 @@ class GraphController(var pane: Pane){
 
     init {
         freeNames()
+        dialog.initStyle(StageStyle.UNDECORATED)
+        dialog.isResizable = false
+
+        alert.initStyle(StageStyle.UNDECORATED)
+        alert.isResizable = false
+
     }
 
     fun preInitAlgorithm() : Boolean {
@@ -69,6 +86,7 @@ class GraphController(var pane: Pane){
     fun isNameAvailable(name: String) : Boolean {
         return names[name] ?: true
     }
+
 
     private fun freeNames(){
         names.clear()
@@ -119,29 +137,27 @@ class GraphController(var pane: Pane){
             }
             if (it.button != MouseButton.SECONDARY) return@EventHandler
 
-            contextMenu.show(pane, it.screenX, it.screenY)
+            contextMenuVertex.show(pane.parent.scene.window, it.screenX, it.screenY)
             renameOption.onAction = EventHandler {
-                if (contextMenu.isShowing) {
-                    contextMenu.hide()
-                }
-                val dialogRenameVertex = TextInputDialog()
-                dialogRenameVertex.title = "Rename vertex"
-                dialogRenameVertex.headerText = "Enter vertex name:"
-                dialogRenameVertex.initStyle(StageStyle.UNDECORATED)
-                dialogRenameVertex.isResizable = false
-                dialogRenameVertex.contentText = "Name:"
-                val newName: Optional<String> = dialogRenameVertex.showAndWait()
+                dialog.title = "Rename vertex"
+                dialog.headerText = "Enter vertex name (length in [1, 2]):"
+                dialog.contentText = "Name:"
+                val newName: Optional<String> = dialog.showAndWait()
+                dialog.editor.clear()
                 if (newName.isEmpty) return@EventHandler
+                if (newName.get().isEmpty() || newName.get().length > 2){
+                    alert.title = "Uncorrected vertex name"
+                    alert.contentText = "Vertex name length must be in [1, 2]"
+                    alert.showAndWait()
+                    return@EventHandler
+                }
                 if (isNameAvailable(newName.get())){
                     names[vertex.name]
                     names[newName.get()] = false
                     vertex.updateName(newName.get())
                 }
             }
-            deleteOption.onAction = EventHandler {
-                if (contextMenu.isShowing) {
-                    contextMenu.hide()
-                }
+            deleteVertexOption.onAction = EventHandler {
                 deleteVertex(vertex)
             }
         }
@@ -165,30 +181,76 @@ class GraphController(var pane: Pane){
 
     fun deleteVertex(vertex: Vertex){
         names[vertex.name] = true
-        for (edge in vertex.edges){
-            pane.children.removeAll(edge, edge.weightText)
-            edgeArray.remove(edge)
+        println(vertex.edges)
+        val edgeCopy = vertex.edges.toList()
+        edgeCopy.forEach {
+            deleteEdge(it)
         }
         pane.children.removeAll(vertex, vertex.text)
         vertexArray.remove(vertex)
     }
 
-    private fun selectVertex(vertex: Vertex){
-        // if it already selected, unselect
+    private fun deleteEdge(edge: Edge){
+        // Delete from Vertex model
+        edge.end!!.edges.remove(edge)
+        edge.start!!.edges.remove(edge)
+        edgeArray.remove(edge)
+        // Delete from ui
+        pane.children.removeAll(edge, edge.weightText)
+    }
+
+    private fun handleWeight(newWeight: Optional<String>) : Int? {
+        dialog.editor.clear()
+        if (newWeight.isEmpty) return null
+        val num = newWeight.get().toIntOrNull()
+        if (num == null || num < 0 || num > 50) {
+            alert.title = "Uncorrected weight"
+            alert.contentText = "Edge weight must be integer in [0, 50]"
+            alert.showAndWait()
+            return null
+        }
+        return num
+    }
+
+    private fun unSelect(vertex: Vertex) : Boolean{
         if (vertex.id == "VertexSelected") {
             vertex.id = "Vertex"
             selectedVertex = null
-            return
+            return true
         }
+        return false
+    }
+
+    private fun selectVertex(vertex: Vertex){
+        // if it already selected, unselect
+        if (unSelect(vertex)) return
         // check if it's first time selection
         vertex.id = "VertexSelected"
         if (selectedVertex == null){
             selectedVertex = vertex
             return
         }
-        // on second selected vertex add edge
+        //TODO Write dialog weight input for Edge creation
 
+        // on second selected vertex add edge
         val newEdge = Edge()
+        newEdge.onMouseClicked = EventHandler {
+            it.consume()
+            if (it.button != MouseButton.SECONDARY) return@EventHandler
+            contextMenuEdge.show(pane.parent.scene.window, it.screenX, it.screenY)
+            reweightOption.onAction = EventHandler {
+                dialog.title = "Reweight edge"
+                dialog.headerText = "Enter new edge weight (Int in [0, 50]):"
+                dialog.contentText = "Weight:"
+                val newWeight: Optional<String> = dialog.showAndWait()
+                val num = handleWeight(newWeight) ?: return@EventHandler
+                newEdge.changeWeight(num)
+            }
+            deleteEdgeOption.onAction = EventHandler {
+                deleteEdge(newEdge)
+            }
+        }
+        newEdge.weightText.onMouseClicked = newEdge.onMouseClicked
         newEdge.addStart(selectedVertex!!)
         newEdge.addEnd(vertex)
         edgeArray.add(newEdge)
@@ -203,6 +265,7 @@ class GraphController(var pane: Pane){
 
         drawGraph()
     }
+
 
     fun drawGraph(){
         pane.children.clear()
