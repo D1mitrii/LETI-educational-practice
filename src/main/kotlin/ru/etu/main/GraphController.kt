@@ -3,12 +3,15 @@ package ru.etu.main
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.Cursor
+import javafx.scene.control.Alert
 import javafx.scene.control.ContextMenu
+import javafx.scene.control.Dialog
 import javafx.scene.control.MenuItem
 import javafx.scene.control.TextInputDialog
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.Pane
 import javafx.stage.StageStyle
+import java.lang.Character.UnicodeBlock
 import java.util.*
 
 
@@ -46,6 +49,23 @@ class GraphController(var pane: Pane){
         freeNames()
     }
 
+    fun preInitAlgorithm() : Boolean {
+        if(selectedVertex == null){
+            return false
+        }
+        vertexArray.forEach {
+            it.updatePath("∞")
+        }
+        selectedVertex!!.updatePath("0")
+        return true
+    }
+
+    fun afterAlgorithm(){
+        vertexArray.forEach {
+            it.updatePath("")
+        }
+    }
+
     fun isNameAvailable(name: String) : Boolean {
         return names[name] ?: true
     }
@@ -79,11 +99,7 @@ class GraphController(var pane: Pane){
         return newCord
     }
 
-    fun createVertex(x: Double, y: Double) : Vertex? {
-        val name = getName()
-        if (name == "-") return null
-
-        val vertex = Vertex(name, x - startArea.first, y - startArea.second)
+    private fun setHandlers(vertex: Vertex){
         vertex.onMouseEntered = EventHandler {
             vertex.cursor = Cursor.HAND
         }
@@ -97,7 +113,6 @@ class GraphController(var pane: Pane){
         }
         vertex.onMouseClicked = EventHandler {
             it.consume()
-
             if (it.button == MouseButton.PRIMARY && state == WorkspaceSTATES.EDGE){
                 selectVertex(vertex)
                 return@EventHandler
@@ -131,9 +146,16 @@ class GraphController(var pane: Pane){
             }
         }
         vertex.text.onMouseDragged = vertex.onMouseDragged
+    }
+
+    fun createVertex(x: Double, y: Double) : Vertex? {
+        val name = getName()
+        if (name == "-") return null
+
+        val vertex = Vertex(name, x - startArea.first, y - startArea.second)
+        setHandlers(vertex)
         vertexArray.add(vertex)
         drawVertex(vertex)
-        vertexArray.reverse()
         return vertex
     }
 
@@ -152,7 +174,6 @@ class GraphController(var pane: Pane){
     }
 
     private fun selectVertex(vertex: Vertex){
-        println(edgeArray)
         // if it already selected, unselect
         if (vertex.id == "VertexSelected") {
             vertex.id = "Vertex"
@@ -186,7 +207,7 @@ class GraphController(var pane: Pane){
     fun drawGraph(){
         pane.children.clear()
         edgeArray.forEach { pane.children.addAll(it, it.weightText) }
-        vertexArray.forEach { pane.children.addAll(it, it.text) }
+        vertexArray.forEach { pane.children.addAll(it, it.text, it.minPath) }
     }
 
     fun clear(){
