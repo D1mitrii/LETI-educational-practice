@@ -1,23 +1,19 @@
 package ru.etu.main
 
 import javafx.application.Platform
-import javafx.event.ActionEvent
-import javafx.event.Event
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
-import javafx.scene.control.TextInputDialog
+import javafx.scene.control.Label
 import javafx.scene.input.InputEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
-import javafx.stage.StageStyle
 import java.net.URL
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
 enum class WorkspaceSTATES{
@@ -40,11 +36,7 @@ class Controller : Initializable {
     private lateinit var MainPane: AnchorPane
 
     @FXML
-    private lateinit var DialogeInput: Button
-
-
-    @FXML
-    private lateinit var Reset: Button
+    private lateinit var TextInfo: Label
 
 
     @FXML
@@ -52,6 +44,15 @@ class Controller : Initializable {
 
     @FXML
     private lateinit var Switcher: Button
+
+    @FXML
+    private lateinit var DialogeInput: Button
+
+    @FXML
+    private lateinit var Reset: Button
+
+    @FXML
+    private lateinit var NextStep: Button
 
 
     @FXML
@@ -90,16 +91,21 @@ class Controller : Initializable {
     @FXML
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
         assert(MainPane != null) {"fx:id=\"MainPane\" was not injected: check your FXML file 'main.fxml'." }
-        assert(DialogeInput != null) {"fx:id=\"DialogeInput\" was not injected: check your FXML file 'main.fxml'." }
-        assert(Reset != null) {"fx:id=\"Reset\" was not injected: check your FXML file 'main.fxml'." }
+
+        assert(Menu != null) {"fx:id=\"Menu\" was not injected: check your FXML file 'main.fxml'." }
         assert(StartDijkstra != null) {"fx:id=\"StartDijkstra\" was not injected: check your FXML file 'main.fxml'." }
         assert(Switcher != null) {"fx:id=\"Switcher\" was not injected: check your FXML file 'main.fxml'." }
+        assert(DialogeInput != null) {"fx:id=\"DialogeInput\" was not injected: check your FXML file 'main.fxml'." }
+        assert(Reset != null) {"fx:id=\"Reset\" was not injected: check your FXML file 'main.fxml'." }
+        assert(NextStep != null) {"fx:id=\"NextStep\" was not injected: check your FXML file 'main.fxml'." }
+
         assert(GraphArea != null) {"fx:id=\"GraphArea\" was not injected: check your FXML file 'main.fxml'." }
-        assert(Menu != null) {"fx:id=\"Menu\" was not injected: check your FXML file 'main.fxml'." }
+
+        assert(topBar != null) { "fx:id=\"topBar\" was not injected: check your FXML file 'main.fxml'." }
         assert(closeButton != null) { "fx:id=\"closeButton\" was not injected: check your FXML file 'main.fxml'." }
         assert(collapseButton != null) {"fx:id=\"collapseButton\" was not injected: check your FXML file 'main.fxml'." }
-        assert(topBar != null) { "fx:id=\"topBar\" was not injected: check your FXML file 'main.fxml'." }
         assert(questionButton != null) {"fx:id=\"questionButton\" was not injected: check your FXML file 'main.fxml'." }
+        assert(TextInfo != null) {"fx:id=\"TextInfo\" was not injected: check your FXML file 'main.fxml'." }
 
         graph = GraphController(GraphArea)
 
