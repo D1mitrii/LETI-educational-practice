@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import java.util.*
+import kotlin.Comparator
 
 
 const val WorkspaceWIDTH = 980.0
@@ -71,16 +72,48 @@ class GraphController(var pane: Pane){
             return false
         }
         vertexArray.forEach {
-            it.updatePath("∞")
+            it.currectPath = Int.MAX_VALUE
+            it.isUsed = false
+            pane.children.add(it.minPath)
         }
-        selectedVertex!!.updatePath("0")
+        selectedVertex!!.currectPath = 0
+        selectedVertex!!.isUsed = true
         return true
     }
 
+    fun dijkstra(){
+        val queue = PriorityQueue<Vertex>()
+
+        for (edge in selectedVertex!!.edges){
+            val neighbor = edge.getVertex(selectedVertex!!)
+            neighbor.currectPath = edge.weight
+            queue.add(neighbor)
+        }
+
+        while (!queue.isEmpty()){
+            val current = queue.remove()
+            if (current.isUsed) continue
+            for (edge in current.edges){
+                val neighbor = edge.getVertex(current)
+                if (neighbor.isUsed) continue
+                queue.add(neighbor)
+                val dist = edge.weight + current.currectPath
+                if (dist < neighbor.currectPath){
+                    neighbor.currectPath = dist
+                }
+            }
+            current.isUsed = true
+        }
+    }
+
+
     fun afterAlgorithm(){
         vertexArray.forEach {
-            it.updatePath("")
+            it.currectPath = Int.MAX_VALUE
+            pane.children.remove(it.minPath)
         }
+        selectedVertex?.id = "Vertex"
+        selectedVertex = null
     }
 
     fun isNameAvailable(name: String) : Boolean {
@@ -117,7 +150,7 @@ class GraphController(var pane: Pane){
         return newCord
     }
 
-    private fun setHandlers(vertex: Vertex){
+    private fun setHandlersVertex(vertex: Vertex){
         vertex.onMouseEntered = EventHandler {
             vertex.cursor = Cursor.HAND
         }
@@ -139,23 +172,7 @@ class GraphController(var pane: Pane){
 
             contextMenuVertex.show(pane.parent.scene.window, it.screenX, it.screenY)
             renameOption.onAction = EventHandler {
-                dialog.title = "Rename vertex"
-                dialog.headerText = "Enter vertex name (length in [1, 2]):"
-                dialog.contentText = "Name:"
-                val newName: Optional<String> = dialog.showAndWait()
-                dialog.editor.clear()
-                if (newName.isEmpty) return@EventHandler
-                if (newName.get().isEmpty() || newName.get().length > 2){
-                    alert.title = "Uncorrected vertex name"
-                    alert.contentText = "Vertex name length must be in [1, 2]"
-                    alert.showAndWait()
-                    return@EventHandler
-                }
-                if (isNameAvailable(newName.get())){
-                    names[vertex.name]
-                    names[newName.get()] = false
-                    vertex.updateName(newName.get())
-                }
+                renameVertex(vertex)
             }
             deleteVertexOption.onAction = EventHandler {
                 deleteVertex(vertex)
@@ -169,17 +186,17 @@ class GraphController(var pane: Pane){
         if (name == "-") return null
 
         val vertex = Vertex(name, x - startArea.first, y - startArea.second)
-        setHandlers(vertex)
+        setHandlersVertex(vertex)
         vertexArray.add(vertex)
         drawVertex(vertex)
         return vertex
     }
 
-    fun drawVertex(vertex: Vertex) {
-        pane.children.addAll(vertex, vertex.text, vertex.minPath)
+    private fun drawVertex(vertex: Vertex) {
+        pane.children.addAll(vertex, vertex.text)
     }
 
-    fun deleteVertex(vertex: Vertex){
+    private fun deleteVertex(vertex: Vertex){
         names[vertex.name] = true
         println(vertex.edges)
         val edgeCopy = vertex.edges.toList()
@@ -212,65 +229,125 @@ class GraphController(var pane: Pane){
         return num
     }
 
-    private fun unSelect(vertex: Vertex) : Boolean{
+    private fun checkAndUnselect(vertex: Vertex) : Boolean{
         if (vertex.id == "VertexSelected") {
             vertex.id = "Vertex"
-            selectedVertex = null
             return true
         }
         return false
     }
 
     private fun selectVertex(vertex: Vertex){
+
         // if it already selected, unselect
-        if (unSelect(vertex)) return
+        if (checkAndUnselect(vertex)) return
+
         // check if it's first time selection
         vertex.id = "VertexSelected"
         if (selectedVertex == null){
             selectedVertex = vertex
             return
         }
-        //TODO Write dialog weight input for Edge creation
 
-        // on second selected vertex add edge
-        val newEdge = Edge()
-        newEdge.onMouseClicked = EventHandler {
-            it.consume()
-            if (it.button != MouseButton.SECONDARY) return@EventHandler
-            contextMenuEdge.show(pane.parent.scene.window, it.screenX, it.screenY)
-            reweightOption.onAction = EventHandler {
-                dialog.title = "Reweight edge"
-                dialog.headerText = "Enter new edge weight (Int in [0, 50]):"
-                dialog.contentText = "Weight:"
-                val newWeight: Optional<String> = dialog.showAndWait()
-                val num = handleWeight(newWeight) ?: return@EventHandler
-                newEdge.changeWeight(num)
-            }
-            deleteEdgeOption.onAction = EventHandler {
-                deleteEdge(newEdge)
+        // check if edge already exist
+        vertex.edges.forEach {
+            if (it.getVertex(vertex) == selectedVertex){
+                unselectVertex(vertex)
+                alert.title = "Unable to create edge"
+                alert.contentText = "The edge already exists right click on it to reweight it"
+                alert.showAndWait()
+                return
             }
         }
-        newEdge.weightText.onMouseClicked = newEdge.onMouseClicked
-        newEdge.addStart(selectedVertex!!)
-        newEdge.addEnd(vertex)
-        edgeArray.add(newEdge)
-
-        selectedVertex!!.edges.add(newEdge)
-        vertex.edges.add(newEdge)
+        // on second selected vertex create edge
+        val edge = edgeCreation(vertex)
+        if (edge != null) {
+            setHandlersEdge(edge)
+        }
 
         // Edge created now unselect vertexes
-        selectedVertex!!.id = "Vertex"
-        vertex.id = "Vertex"
-        selectedVertex = null
+        unselectVertex(vertex)
 
         drawGraph()
     }
 
+    private fun unselectVertex(vertex: Vertex){
+        selectedVertex!!.id = "Vertex"
+        vertex.id = "Vertex"
+        selectedVertex = null
+    }
 
-    fun drawGraph(){
+    private fun setHandlersEdge(edge: Edge){
+        edge.onMouseClicked = EventHandler {
+            it.consume()
+            if (it.button != MouseButton.SECONDARY) return@EventHandler
+            contextMenuEdge.show(pane.parent.scene.window, it.screenX, it.screenY)
+            reweightOption.onAction = EventHandler {
+                reweight(edge)
+            }
+            deleteEdgeOption.onAction = EventHandler {
+                deleteEdge(edge)
+            }
+            return@EventHandler
+        }
+        edge.weightText.onMouseClicked = edge.onMouseClicked
+    }
+
+    private fun reweight(edge: Edge){
+        dialog.title = "Reweight edge"
+        dialog.headerText = "Enter new edge weight (Int in [0, 50]):"
+        dialog.contentText = "Weight:"
+        val newWeight: Optional<String> = dialog.showAndWait()
+        val weightNum = handleWeight(newWeight) ?: return
+        edge.changeWeight(weightNum)
+    }
+
+    private fun renameVertex(vertex: Vertex) {
+        dialog.title = "Rename vertex"
+        dialog.headerText = "Enter vertex name (length in [1, 2]):"
+        dialog.contentText = "Name:"
+        val newName: Optional<String> = dialog.showAndWait()
+        dialog.editor.clear()
+        if (newName.isEmpty) return
+        alert.title = "Uncorrected vertex name"
+        if (newName.get().isEmpty() || newName.get().length > 2){
+            alert.contentText = "Vertex name length must be in [1, 2]"
+            alert.showAndWait()
+            return
+        }
+        if (isNameAvailable(newName.get())){
+            names[vertex.name] = true
+            names[newName.get()] = false
+            vertex.updateName(newName.get())
+        }
+        else{
+            alert.contentText = "Vertex name already in use, choose another"
+            alert.showAndWait()
+            return
+        }
+    }
+
+    private fun edgeCreation(vertex: Vertex) : Edge? {
+        dialog.title = "Set weight edge"
+        dialog.headerText = "Enter new edge weight (Int in [0, 50]):"
+        dialog.contentText = "Weight:"
+        val num = handleWeight(dialog.showAndWait()) ?: return null
+        // on second selected vertex add edge
+        val newEdge = Edge()
+        newEdge.changeWeight(num)
+        newEdge.addStart(selectedVertex!!)
+        newEdge.addEnd(vertex)
+        edgeArray.add(newEdge)
+        selectedVertex!!.edges.add(newEdge)
+        vertex.edges.add(newEdge)
+        return newEdge
+    }
+
+
+    private fun drawGraph(){
         pane.children.clear()
         edgeArray.forEach { pane.children.addAll(it, it.weightText) }
-        vertexArray.forEach { pane.children.addAll(it, it.text, it.minPath) }
+        vertexArray.forEach { pane.children.addAll(it, it.text) }
     }
 
     fun clear(){

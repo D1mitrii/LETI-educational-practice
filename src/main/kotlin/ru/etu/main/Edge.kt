@@ -5,7 +5,7 @@ import javafx.scene.text.Text
 
 class Edge : Line() {
 
-    private var weight: Int = 0
+    var weight: Int = 0
         set(value) {
             field = value
             this.weightText.text = value.toString()
@@ -58,6 +58,11 @@ class Edge : Line() {
         this.endX = end!!.centerX
         this.endY = end!!.centerY
         relocateWeight()
+    }
+
+    fun getVertex(vertex: Vertex) : Vertex {
+        if (start == vertex) return end!!
+        return start!!
     }
 
 }

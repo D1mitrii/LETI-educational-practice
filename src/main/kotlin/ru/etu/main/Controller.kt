@@ -132,13 +132,16 @@ class Controller : Initializable {
             StartDijkstra.text = "Unlock"
             GraphArea.addEventFilter(InputEvent.ANY, handlerAll)
 
-            if (graph.preInitAlgorithm()) return@EventHandler
-            // Unlock, because no selected vertex
-            unlock()
-            val alert = Alert(Alert.AlertType.ERROR)
-            alert.title = "No start vertex selected"
-            alert.contentText = "Go into add edges mode and select a vertex.\nThen press 'Start Dijkstra button'"
-            alert.showAndWait()
+            if (!graph.preInitAlgorithm()){
+                // Unlock, because no selected vertex
+                unlock()
+                val alert = Alert(Alert.AlertType.ERROR)
+                alert.title = "No start vertex selected"
+                alert.contentText = "Go into add edges mode and select a vertex.\nThen press 'Start Dijkstra button'"
+                alert.showAndWait()
+                return@EventHandler
+            }
+            graph.dijkstra()
         }
 
         Switcher.onAction = EventHandler {

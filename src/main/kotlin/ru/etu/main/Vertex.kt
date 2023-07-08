@@ -6,11 +6,22 @@ import javafx.scene.shape.Circle
 import javafx.scene.text.Text
 import javafx.scene.text.TextBoundsType
 
-class Vertex(var name: String, x: Double, y: Double) : Circle() {
+class Vertex(var name: String, x: Double, y: Double) : Circle(), Comparable<Vertex> {
 
     var text: Text
     val edges: MutableList<Edge> = mutableListOf()
     var minPath: Label = Label("")
+    var isUsed: Boolean = false
+    var currectPath: Int = Int.MAX_VALUE
+        set(value) {
+            field = value
+            if (value == Int.MAX_VALUE)
+            {
+                minPath.text = "∞"
+                return
+            }
+            minPath.text = value.toString()
+        }
 
     init {
         this.centerX = x
@@ -68,9 +79,9 @@ class Vertex(var name: String, x: Double, y: Double) : Circle() {
         }
     }
 
-    fun updatePath(string: String){
-        this.minPath.text = string
-        setMinPath()
+    override fun compareTo(other: Vertex): Int  = when{
+        currectPath == other.currectPath -> name.compareTo(other.name)
+        else -> currectPath - other.currectPath
     }
 
 }

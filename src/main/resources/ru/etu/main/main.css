@@ -27,7 +27,7 @@
 }
 
 .MainMenuButton {
-    -fx-border-color: #042B78;
+    -fx-border-color: #1F6E8C;
     -fx-border-width: 2.0;
     -fx-border-radius: 18.0;
     -fx-border-insets: -1.0;
@@ -40,6 +40,11 @@
     -fx-font-weight: 700;
 
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 0, 4, 1, 2 );
+}
+
+.MainMenuButton:hover {
+    -fx-background-color: #042B78;
+    -fx-text-fill: #84A7A1;
 }
 
 .Title {
@@ -79,6 +84,8 @@
     -fx-stroke: black;
     -fx-stroke-width: 3px;
 }
+
+
 #EdgeWeight{
     -fx-fill: white;
     -fx-font-family: "JetBrains Mono Medium";
@@ -87,6 +94,8 @@
 }
 
 #MinPath{
-    -fx-font-size: 18px;
-    -fx-text-fill: red;
+    -fx-font-size: 22px;
+    -fx-text-fill: white;
 }
+
+
