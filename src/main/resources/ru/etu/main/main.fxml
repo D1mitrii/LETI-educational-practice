@@ -38,7 +38,7 @@
                         <Insets left="40.0" right="40.0" />
                      </VBox.margin>
                   </Button>
-                  <Button fx:id="NextStep" maxHeight="60.0" maxWidth="170.0" minHeight="60.0" minWidth="170.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="170.0" styleClass="MainMenuButton" text="Next Step">
+                  <Button fx:id="NextStep" maxHeight="60.0" maxWidth="170.0" minHeight="60.0" minWidth="170.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="170.0" styleClass="MainMenuButton" text="Next Step" visible="false">
                      <VBox.margin>
                         <Insets left="40.0" />
                      </VBox.margin>
@@ -102,7 +102,7 @@
                   </Text>
                </children>
             </HBox>
-            <Label fx:id="TextInfo" layoutX="401.0" layoutY="13.0" maxHeight="20.0" maxWidth="660.0" minHeight="20.0" minWidth="660.0" prefHeight="20.0" prefWidth="660.0" />
+            <Label fx:id="TextInfo" layoutX="401.0" layoutY="13.0" maxHeight="20.0" maxWidth="660.0" minHeight="20.0" minWidth="660.0" prefHeight="20.0" prefWidth="660.0" styleClass="InfoLable" />
          </children></AnchorPane>
       <Pane fx:id="GraphArea" layoutX="275.0" layoutY="71.0" maxHeight="624.0" maxWidth="980.0" minHeight="624.0" minWidth="980.0" prefHeight="624.0" prefWidth="980.0" styleClass="graphArea" stylesheets="@main.css" />
    </children>

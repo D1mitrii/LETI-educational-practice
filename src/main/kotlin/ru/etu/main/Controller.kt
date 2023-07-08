@@ -84,6 +84,8 @@ class Controller : Initializable {
 
     private fun unlock(){
         StartDijkstra.text = "Start Dijkstra"
+        TextInfo.text = ""
+        NextStep.isVisible = false
         graph.afterAlgorithm()
         handlerBlocker = false
         GraphArea.removeEventFilter(InputEvent.ANY, handlerAll)
@@ -137,6 +139,8 @@ class Controller : Initializable {
             handlerBlocker = true
             StartDijkstra.text = "Unlock"
             GraphArea.addEventFilter(InputEvent.ANY, handlerAll)
+            TextInfo.text = "Initializing Dijkstra"
+            NextStep.isVisible = true
 
             if (!graph.preInitAlgorithm()){
                 // Unlock, because no selected vertex
@@ -176,6 +180,9 @@ class Controller : Initializable {
             it.consume()
             if (handlerBlocker) return@EventHandler
             graph.clear()
+        }
+        NextStep.onAction = EventHandler {
+            println("Hi")
         }
     }
 }
