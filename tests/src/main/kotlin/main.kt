@@ -115,12 +115,13 @@ class Graph {
     }
 
     fun update_edge()  { // every step check 1 edge
-        if (current_edge_index < current_vertex!!.edges.size){
+        while ((current_edge_index < current_vertex!!.edges.size) && (current_vertex!!.edges[current_edge_index].end.used == true)) //if next vertex is already used check next
+            this.current_edge_index++
+        if (current_edge_index < current_vertex!!.edges.size) {
             if (current_vertex!!.d + current_vertex!!.edges[current_edge_index].weight < current_vertex!!.edges[current_edge_index].end.d)
                 current_vertex!!.edges[current_edge_index].end.d = current_vertex!!.d + current_vertex!!.edges[current_edge_index].weight
             this.current_edge_index++
-        }
-        else
+        } else
             current_vertex = null
     }
 
