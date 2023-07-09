@@ -75,6 +75,11 @@ class Graph {
         vertices.put(new, buff)
     }
 
+    fun get_next_step_idk(){
+        scan.next().single()
+        //print_res()
+    }
+
     fun dijkstra() {
         vertices[start_vertex]!!.d = 0
         for (i in vertices.values) {
@@ -83,10 +88,12 @@ class Graph {
                 if (!j.used && (v == null || j.d < v.d))
                     v = j
             }
+            get_next_step_idk()
             if (v!!.d == Int.MAX_VALUE)
                 break
             v.used = true
             for (e in v.edges) {
+                get_next_step_idk()
                 if (v.d + e.weight < e.end.d) {
                     e.end.d = v.d + e.weight
                 }
