@@ -20,7 +20,7 @@
                   <TextArea fx:id="TextArea" prefHeight="266.0" prefWidth="358.0" text="&quot;Количество вершин N&quot;&#10;&quot;Название вершины 1&quot; x1 y1&#10;...&#10;&quot;Название вершины N&quot; xN yN&#10;&quot;Название вершины i&quot; &quot;Название вершины j&quot; &quot;вес ребра 1&quot;&#10;..." />
                </children>
             </Pane>
-            <HBox layoutX="101.0" layoutY="308.0" prefHeight="64.0" prefWidth="172.0">
+            <HBox layoutX="199.0" layoutY="314.0" prefHeight="64.0" prefWidth="172.0">
                <children>
                   <Button fx:id="approveButton" mnemonicParsing="false" prefHeight="46.0" prefWidth="99.0" text="approve">
                      <HBox.margin>
@@ -47,6 +47,15 @@
                   <Text layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5. Координаты вершин ( 0 &lt;= x &lt;= 980, 0 &lt;= y &lt;= 624 )" wrappingWidth="252.53668212890625" />
                </children>
             </Pane>
+            <HBox layoutX="14.0" layoutY="314.0" prefHeight="64.0" prefWidth="172.0">
+               <children>
+                  <Button fx:id="openButton" mnemonicParsing="false" prefHeight="46.0" prefWidth="99.0" text="open">
+                     <HBox.margin>
+                        <Insets bottom="15.0" left="50.0" right="50.0" top="15.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
       </AnchorPane>
    </content>
