@@ -5,16 +5,12 @@ import javafx.fxml.FXML
 import javafx.scene.Cursor
 import javafx.scene.control.Alert
 import javafx.scene.control.ContextMenu
-import javafx.scene.control.Dialog
 import javafx.scene.control.MenuItem
 import javafx.scene.control.TextInputDialog
 import javafx.scene.input.MouseButton
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
-import javafx.stage.Stage
 import javafx.stage.StageStyle
 import java.util.*
-import kotlin.Comparator
 
 
 const val WorkspaceWIDTH = 980.0
@@ -57,6 +53,13 @@ class GraphController(var pane: Pane){
 
     private val names: MutableMap<String, Boolean> = mutableMapOf()
 
+    private var currentVertex: Vertex? = null
+    private var prevEdge: Edge? = null
+    private var positionInVertex: Int = 0
+
+    private var queue: PriorityQueue<Vertex> = PriorityQueue<Vertex>()
+
+
     init {
         freeNames()
         dialog.initStyle(StageStyle.UNDECORATED)
@@ -71,46 +74,67 @@ class GraphController(var pane: Pane){
         if(selectedVertex == null){
             return false
         }
-        vertexArray.forEach {
-            it.currectPath = Int.MAX_VALUE
-            it.isUsed = false
-            pane.children.add(it.minPath)
+        for (vertex in vertexArray){
+            vertex.currectPath = Int.MAX_VALUE
+            vertex.isUsed = false
+            pane.children.add(vertex.minPath)
         }
         selectedVertex!!.currectPath = 0
         selectedVertex!!.isUsed = true
-        return true
-    }
 
-    fun dijkstra(){
-        val queue = PriorityQueue<Vertex>()
 
         for (edge in selectedVertex!!.edges){
             val neighbor = edge.getVertex(selectedVertex!!)
             neighbor.currectPath = edge.weight
             queue.add(neighbor)
         }
+        return true
+    }
 
-        while (!queue.isEmpty()){
-            val current = queue.remove()
-            if (current.isUsed) continue
-            for (edge in current.edges){
-                val neighbor = edge.getVertex(current)
-                if (neighbor.isUsed) continue
-                queue.add(neighbor)
-                val dist = edge.weight + current.currectPath
-                if (dist < neighbor.currectPath){
-                    neighbor.currectPath = dist
-                }
+    private fun checkEdge() : String{
+        prevEdge?.id = "Edge"
+        while(positionInVertex < currentVertex!!.edges.size){
+            prevEdge = currentVertex!!.edges[positionInVertex]
+            positionInVertex++
+            val neighbor = prevEdge!!.getVertex(currentVertex!!)
+            if (neighbor.isUsed) continue
+            prevEdge!!.id = "EdgeCheck"
+            queue.add(neighbor)
+            if (currentVertex!!.currectPath + prevEdge!!.weight < neighbor.currectPath){
+                val prevPath = neighbor.minPath.text
+                neighbor.currectPath = currentVertex!!.currectPath + prevEdge!!.weight
+                return "Updating the shortest path to the vertex \'${neighbor.name}\' from $prevPath to ${neighbor.currectPath}"
             }
-            current.isUsed = true
+            return "The shortest path to the vertex \'${neighbor.name}\' could not be updated"
         }
+        currentVertex!!.isUsed = true
+        val name = currentVertex!!.name
+        currentVertex = null
+        return "Mark vertex '${name}' as viewed"
+    }
+
+    fun makeStep() : String {
+        queue.removeIf { it.isUsed }
+        if (currentVertex == null && queue.isEmpty()) return "Algorithm finished"
+
+        if (currentVertex == null){
+            currentVertex = queue.remove()
+            currentVertex!!.id = "VertexSelected"
+            positionInVertex = 0
+        }
+
+        return checkEdge()
     }
 
 
     fun afterAlgorithm(){
         vertexArray.forEach {
             it.currectPath = Int.MAX_VALUE
+            it.id = "Vertex"
             pane.children.remove(it.minPath)
+        }
+        edgeArray.forEach {
+            it.id = "Edge"
         }
         selectedVertex?.id = "Vertex"
         selectedVertex = null

@@ -113,6 +113,11 @@
     -fx-stroke: black;
 }
 
+#VertexChecked {
+    -fx-fill: #006400;
+    -fx-effect: dropshadow(three-pass-box, black, 5, 0, 0, 0);
+    -fx-stroke: black;
+}
 
 #Vertex:hover{
     -fx-fill: #AAFF00FF;
@@ -128,6 +133,11 @@
 
 #Edge{
     -fx-stroke: black;
+    -fx-stroke-width: 3px;
+}
+
+#EdgeCheck{
+    -fx-stroke: red;
     -fx-stroke-width: 3px;
 }
 

@@ -12,6 +12,15 @@ class Vertex(var name: String, x: Double, y: Double) : Circle(), Comparable<Vert
     val edges: MutableList<Edge> = mutableListOf()
     var minPath: Label = Label("")
     var isUsed: Boolean = false
+        set(value) {
+            if (value){
+                this.id = "VertexChecked"
+            }
+            else {
+                this.id = "Vertex"
+            }
+            field = value
+        }
     var currectPath: Int = Int.MAX_VALUE
         set(value) {
             field = value

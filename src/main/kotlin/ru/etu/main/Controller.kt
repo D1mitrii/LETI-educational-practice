@@ -59,6 +59,10 @@ class Controller : Initializable {
 
 
     @FXML
+    private lateinit var Skip: Button
+
+
+    @FXML
     private lateinit var closeButton: Button
 
 
@@ -89,6 +93,7 @@ class Controller : Initializable {
         StartDijkstra.text = "Start Dijkstra"
         TextInfo.text = ""
         NextStep.isVisible = false
+        Skip.isVisible = false
         graph.afterAlgorithm()
         handlerBlocker = false
         GraphArea.removeEventFilter(InputEvent.ANY, handlerAll)
@@ -124,6 +129,7 @@ class Controller : Initializable {
         assert(DialogeInput != null) {"fx:id=\"DialogeInput\" was not injected: check your FXML file 'main.fxml'." }
         assert(Reset != null) {"fx:id=\"Reset\" was not injected: check your FXML file 'main.fxml'." }
         assert(NextStep != null) {"fx:id=\"NextStep\" was not injected: check your FXML file 'main.fxml'." }
+        assert(Skip != null) {"fx:id=\"Skip\" was not injected: check your FXML file 'main.fxml'." }
 
         assert(GraphArea != null) {"fx:id=\"GraphArea\" was not injected: check your FXML file 'main.fxml'." }
 
@@ -159,6 +165,7 @@ class Controller : Initializable {
         }
 
         StartDijkstra.onAction = EventHandler{
+            it.consume()
             if (handlerBlocker) {
                 unlock()
                 return@EventHandler
@@ -169,6 +176,7 @@ class Controller : Initializable {
             GraphArea.addEventFilter(InputEvent.ANY, handlerAll)
             TextInfo.text = "Initializing Dijkstra"
             NextStep.isVisible = true
+            Skip.isVisible = true
 
             if (!graph.preInitAlgorithm()){
                 // Unlock, because no selected vertex
@@ -179,7 +187,6 @@ class Controller : Initializable {
                 alert.showAndWait()
                 return@EventHandler
             }
-            graph.dijkstra()
         }
 
         Switcher.onAction = EventHandler {
@@ -210,8 +217,14 @@ class Controller : Initializable {
             graph.clear()
         }
         NextStep.onAction = EventHandler {
-            // TODO | Click show next step of Dijkstra algorithm
+            if (TextInfo.text == "Algorithm finished") return@EventHandler
+            TextInfo.text = graph.makeStep()
         }
+        Skip.onAction = EventHandler {
+            TextInfo.text = graph.makeStep()
+            while (TextInfo.text != "Algorithm finished"){TextInfo.text = graph.makeStep()}
+        }
+
         MainPane.addEventHandler(KeyEvent.KEY_PRESSED) {
             if (!it.code.equals(KeyCode.F1)) return@addEventHandler
             it.consume()
