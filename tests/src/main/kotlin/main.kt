@@ -1,3 +1,4 @@
+import com.sun.org.apache.xpath.internal.operations.Bool
 import java.util.Scanner
 
 import javafx.application.Application
@@ -41,6 +42,9 @@ class Graph {
     var vertices = mutableMapOf<Char, Vertex>()
     var start_vertex: Char? = null
 
+    var current_vertex: Vertex? = null //current vertex
+    var current_edge_index: Int = 0 //edge index to check for current vertex
+    var checked_vertex: Int = 0 //number of checked vertices
 
     fun add_vertex(name: Char) {
         this.vertices.put(name, Vertex())
@@ -67,17 +71,13 @@ class Graph {
 
     fun set_start(name: Char) {
         this.start_vertex = name
+        vertices[start_vertex]!!.d = 0
     }
 
     fun rename_vertex(prev: Char, new: Char) {
         val buff = vertices[prev] ?: return
         vertices.remove(prev)
         vertices.put(new, buff)
-    }
-
-    fun get_next_step_idk(){
-        scan.next().single()
-        //print_res()
     }
 
     fun dijkstra() {
@@ -88,17 +88,50 @@ class Graph {
                 if (!j.used && (v == null || j.d < v.d))
                     v = j
             }
-            get_next_step_idk()
             if (v!!.d == Int.MAX_VALUE)
                 break
             v.used = true
             for (e in v.edges) {
-                get_next_step_idk()
-                if (v.d + e.weight < e.end.d) {
+                if (v.d + e.weight < e.end.d)
                     e.end.d = v.d + e.weight
-                }
             }
         }
+    }
+
+    fun choose_new_vertex() { //choose next vertex to check
+        var v: Vertex? = null
+        for (j in vertices.values) {
+            if (!j.used && (v == null || j.d < v.d))
+                v = j
+        }
+        if (v!!.d == Int.MAX_VALUE) {
+            checked_vertex++
+            return
+        }
+        v.used = true
+        current_vertex = v
+        current_edge_index = 0
+        checked_vertex++
+    }
+
+    fun update_edge()  { // every step check 1 edge
+        if (current_edge_index < current_vertex!!.edges.size){
+            if (current_vertex!!.d + current_vertex!!.edges[current_edge_index].weight < current_vertex!!.edges[current_edge_index].end.d)
+                current_vertex!!.edges[current_edge_index].end.d = current_vertex!!.d + current_vertex!!.edges[current_edge_index].weight
+            this.current_edge_index++
+        }
+        else
+            current_vertex = null
+    }
+
+    fun next_step(): Boolean{ //true - end of algorithm, false - there are unseen vertices
+        if (checked_vertex == vertices.size - 1)
+            return true
+        if (current_vertex == null)
+            choose_new_vertex()
+        else
+            update_edge()
+        return false
     }
 
     fun edge_change_weight(from : Char, to : Char, new_weight: Int){
@@ -130,6 +163,7 @@ fun main(){
     gr.add_vertex('7')
     gr.add_vertex('8')
 
+
     gr.add_symmetric_edge('1', '2', 7)
     gr.add_symmetric_edge('1', '3', 9)
     gr.add_symmetric_edge('1', '6', 14)
@@ -146,6 +180,9 @@ fun main(){
 
     gr.set_start('1')
 
-    gr.dijkstra()
+    //gr.dijkstra()
+
+    while(!gr.next_step()){}
+
     gr.print_res()
 }
