@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap');
 
-.background{
+#MainPane {
     -fx-background-color:  #84A7A1;
 }
 
@@ -13,14 +13,52 @@
     -fx-background-color: #1F6E8C;
 }
 
-.Button {
-    -fx-background-color: #D9D9D9;
+.topBar .button {
+    -fx-background-color: white;
+    -fx-background-radius: 16px;
 }
 
-.Button:hover {
-    -fx-background-color: #D21312;
-    -fx-text-fill: #D9D9D9;
+.topBar .button:hover {
+    -fx-background-radius: 16px;
+    -fx-border-radius: 16px;
 }
+
+#questionButton .icon {
+    -fx-image: url("questionIcon.png");
+}
+
+#questionButton:hover{
+    -fx-background-color: #33c547;
+}
+#questionButton:hover .icon {
+    -fx-image: url("questionIconHover.png");
+}
+
+#collapseButton .icon {
+    -fx-image: url("collapseIcon.png");
+}
+
+#collapseButton:hover {
+    -fx-background-color: #fbbb3f;
+}
+
+#collapseButton:hover .icon {
+    -fx-image: url("collapseIconHover.png");
+}
+
+#closeButton .icon {
+    -fx-image: url("closeIcon.png");
+    -fx-background-color: #006400;
+}
+
+#closeButton:hover {
+    -fx-background-color: #fa5652;
+}
+
+#closeButton:hover .icon {
+    -fx-image: url("closeIconHover.png");
+}
+
 
 .InfoLable {
     -fx-text-fill: white;

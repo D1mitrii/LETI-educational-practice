@@ -11,7 +11,7 @@ class MainApplication : Application() {
     override fun start(primStage: Stage) {
         val fxmlLoader = FXMLLoader(MainApplication::class.java.getResource("main.fxml"))
         primStage.scene = Scene(fxmlLoader.load(), 1280.0, 720.0)
-        primStage.initStyle(StageStyle.UNDECORATED)
+        primStage.initStyle(StageStyle.TRANSPARENT)
         primStage.isResizable = false
         primStage.show()
     }
