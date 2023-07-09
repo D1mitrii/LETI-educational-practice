@@ -29,6 +29,17 @@ class InputWindow {
     @FXML
     private lateinit var openButton: Button
 
+    private fun alert_throw(headerText : String, contentText : String)
+    {
+        val alert = Alert(AlertType.ERROR)
+
+        alert.title = "Error alert"
+        alert.headerText = headerText
+        alert.contentText = contentText
+
+        alert.showAndWait()
+    }
+
     @FXML
     fun initialize() {
         assert(TextArea != null) {"fx:id=\"TextArea\" was not injected: check your FXML file 'InputWndow.fxml'." }
@@ -39,93 +50,55 @@ class InputWindow {
         approveButton.onMousePressed = EventHandler {
             val Text = TextArea.getText()
             var N = 1
-            var flag = true
             val lines : List<String> = Text.lines()
             if (lines[0].isEmpty() || lines[0][0].isWhitespace())
             {
-                val alert = Alert(AlertType.ERROR)
+                alert_throw("Empty field!", "The field is empty!")
 
-                alert.title = "Error alert"
-                alert.headerText = "Empty field!"
-                alert.contentText = "The field is empty!"
-                flag = false
-
-                alert.showAndWait()
+                return@EventHandler
             }
-            else if (lines[0][0].isLetter())
+            else if (!lines[0][0].isDigit())
             {
-                val alert = Alert(AlertType.ERROR)
+                alert_throw("Wrong input!", "Digit must be first, not the letter!")
 
-                alert.title = "Error alert"
-                alert.headerText = "Wrong input!"
-                alert.contentText = "Digit must be first, not the letter!"
-                flag = false
-
-                alert.showAndWait()
+                return@EventHandler
             } else
                 N = lines[0].toInt()
-            if (flag) {
-                for (i in 1..N) {
-                    val elems = lines[i].split("\\s+".toRegex()).toTypedArray()
-                    if (elems[0].length !in 1..2) {
-                        val alert = Alert(AlertType.ERROR)
+            for (i in 1 until N) {
+                val elems = lines[i].split("\\s+".toRegex()).toTypedArray()
+                if (elems[0].length !in 1..2) {
+                    alert_throw("Wrong name!", "The name of the vertex is incorrect!")
 
-                        alert.title = "Error alert"
-                        alert.headerText = "Wrong name!"
-                        alert.contentText = "The name of the vertex is incorrect!"
-                        flag = false
+                    return@EventHandler
+                }
+                if (elems[1].toInt() !in 0..980) {
+                    alert_throw("Error X!", "The X coordinate is incorrect!")
 
-                        alert.showAndWait()
-                    }
-                    if (elems[1].toInt() !in 0..980) {
-                        val alert = Alert(AlertType.ERROR)
+                    return@EventHandler
+                }
+                if (elems[2].toInt() !in 0..624) {
+                    alert_throw("Error Y!", "The Y coordinate is incorrect!")
 
-                        alert.title = "Error alert"
-                        alert.headerText = "Error X!"
-                        alert.contentText = "The X coordinate is incorrect!"
-                        flag = false
-
-                        alert.showAndWait()
-                    }
-                    if (elems[2].toInt() !in 0..624) {
-                        val alert = Alert(AlertType.ERROR)
-
-                        alert.title = "Error alert"
-                        alert.headerText = "Error Y!"
-                        alert.contentText = "The X coordinate is incorrect!"
-                        flag = false
-
-                        alert.showAndWait()
-                    }
-                    if (!flag)
-                        break
+                    return@EventHandler
                 }
             }
-            if (flag) {
-                for (i in N + 1 until lines.size) {
-                    val elems = lines[i].split("\\s+".toRegex()).toTypedArray()
-                    if (elems[0] == elems[1]) {
-                        val alert = Alert(AlertType.ERROR)
 
-                        alert.title = "Error alert"
-                        alert.headerText = "Loop error!"
-                        alert.contentText = "There must be no loop in graph!"
-                        flag = false
+            for (i in N until lines.size - 1) {
+                val elems = lines[i].split("\\s+".toRegex()).toTypedArray()
+                if (elems[0] == elems[1]) {
+                    alert_throw("Loop error!", "There must be no loop in graph!")
 
-                        alert.showAndWait()
-                    }
-                    if (elems[2].toInt() !in 0..50) {
-                        val alert = Alert(AlertType.ERROR)
+                    return@EventHandler
+                }
+                if (elems[0].length !in 1..2 || elems[1].length !in 1..2) {
+                    alert_throw("Wrong name!", "The name of the vertex is incorrect!")
 
-                        alert.title = "Error alert"
-                        alert.headerText = "Edge value error!"
-                        alert.contentText = "The value of the edge is incorrect!"
-                        flag = false
+                    return@EventHandler
+                }
+                if (elems[2].toInt() !in 0..50) {
+                    alert_throw("Edge value error!", "The value of the edge is incorrect!")
 
-                        alert.showAndWait()
-                    }
-                    if (flag)
-                        break
+                    return@EventHandler
                 }
             }
         }
@@ -143,13 +116,7 @@ class InputWindow {
             }
             else
             {
-                val alert = Alert(AlertType.ERROR)
-
-                alert.title = "Error alert"
-                alert.headerText = "Open error!"
-                alert.contentText = "Could not open the file!"
-
-                alert.showAndWait()
+                alert_throw("Open error!", "Could not open the file!")
             }
         }
     }
