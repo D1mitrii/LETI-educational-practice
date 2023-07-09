@@ -48,8 +48,8 @@ class GraphController(var pane: Pane){
 
     private val startArea: Pair<Double, Double> = Pair(pane.layoutX, pane.layoutY)
 
-    private val vertexArray: MutableList<Vertex> = mutableListOf()
-    private val edgeArray: MutableList<Edge> = mutableListOf()
+    private var vertexArray: MutableList<Vertex> = mutableListOf()
+    private var edgeArray: MutableList<Edge> = mutableListOf()
 
     private val names: MutableMap<String, Boolean> = mutableMapOf()
 
@@ -372,6 +372,15 @@ class GraphController(var pane: Pane){
         pane.children.clear()
         edgeArray.forEach { pane.children.addAll(it, it.weightText) }
         vertexArray.forEach { pane.children.addAll(it, it.text) }
+    }
+
+    fun setGraph(vertexes: MutableList<Vertex>, edges: MutableList<Edge>){
+        freeNames()
+        vertexes.forEach { setHandlersVertex(it); names[it.name] = false }
+        edges.forEach { setHandlersEdge(it) }
+        vertexArray = vertexes
+        edgeArray = edges
+        drawGraph()
     }
 
     fun clear(){

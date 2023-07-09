@@ -51,6 +51,10 @@ class InputWindow {
         return true
     }
 
+    fun setGraph(graphController: GraphController){
+        this.graphController = graphController
+    }
+
     @FXML
     fun initialize() {
         assert(TextArea != null) {"fx:id=\"TextArea\" was not injected: check your FXML file 'InputWndow.fxml'." }
@@ -59,9 +63,9 @@ class InputWindow {
 
 
         approveButton.onMousePressed = EventHandler {
+            graphController.clear()
             val stringToVertex: MutableMap<String, Vertex> = mutableMapOf()
             val edges: MutableList<Edge> = mutableListOf()
-            graphController = GraphController()
             val Text = TextArea.text
             val N : Int
             val lines : List<String> = Text.lines()
@@ -112,7 +116,7 @@ class InputWindow {
                 stringToVertex[elems[0]] = Vertex(elems[0], x.toDouble(), y.toDouble())
             }
 
-            for (i in N + 1 until lines.size - 1) {
+            for (i in N+1 until lines.size) {
                 val elems = lines[i].split("\\s+".toRegex()).toTypedArray()
                 if (!checkLine(elems)) return@EventHandler
 
@@ -120,7 +124,7 @@ class InputWindow {
                     alert_throw("Loop error!", "There must be no loop in graph!")
                     return@EventHandler
                 }
-                if (elems[0].length !in 1..2 || elems[1].length !in 1..2) {
+                if (elems[0].length !in 1..2 || elems[1].length !in 1..2 || stringToVertex[elems[0]] == null || stringToVertex[elems[1]] == null) {
                     alert_throw("Wrong name!", "The name of the vertex is incorrect!")
                     return@EventHandler
                 }
@@ -139,11 +143,23 @@ class InputWindow {
 
                     return@EventHandler
                 }
-                var edge = Edge()
-                for (edge in edges){
-                       if (edge.)
+                var edge: Edge? = null
+                for (elem in edges){
+                       if (elem.getVertex(stringToVertex[elems[0]]!!) == stringToVertex[elems[1]]){
+                           edge = elem
+                       }
                 }
+                if (edge != null){
+                    edge.changeWeight(w)
+                    continue
+                }
+                edge = Edge()
+                edge.addStart(stringToVertex[elems[0]]!!)
+                edge.addEnd(stringToVertex[elems[1]]!!)
+                edge.changeWeight(w)
+                edges.add(edge)
             }
+            graphController.setGraph(stringToVertex.values.toMutableList(), edges)
             approveButton.scene.window.hide()
         }
 

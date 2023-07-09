@@ -35,12 +35,15 @@ class Edge : Line() {
         start = vertex
         this.startX = vertex.centerX
         this.startY = vertex.centerY
+        start!!.edges.add(this)
+        relocateWeight()
     }
 
     fun addEnd(vertex: Vertex){
         end = vertex
         this.endX = vertex.centerX
         this.endY = vertex.centerY
+        end!!.edges.add(this)
         relocateWeight()
     }
 
