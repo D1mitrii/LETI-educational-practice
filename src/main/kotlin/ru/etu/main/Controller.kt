@@ -3,6 +3,7 @@ package ru.etu.main
 import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.Alert
 import javafx.scene.control.Button
@@ -10,6 +11,9 @@ import javafx.scene.control.Label
 import javafx.scene.input.InputEvent
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import javafx.scene.control.ButtonType
+import javafx.scene.control.Dialog
+import javafx.scene.control.DialogPane
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
@@ -201,6 +205,23 @@ class Controller : Initializable {
             }
             graph.state = flag
         }
+
+        DialogeInput.onMousePressed = EventHandler {
+            val fxmlLoader = FXMLLoader(MainApplication::class.java.getResource("InputWindow.fxml"))
+            val dialogPane = fxmlLoader.load<DialogPane>()
+            val dialogController = fxmlLoader.getController<InputWindow>()
+            val dialog = Dialog<ButtonType>()
+            dialog.dialogPane = dialogPane
+            dialog.title = "Input from Dialog"
+            val dialogWindow = dialogPane.scene.window
+            dialogWindow.onCloseRequest = EventHandler {
+                dialogWindow.hide()
+            }
+            dialog.showAndWait()
+            // TODO Дописать логику получения информации из контролера InputWindow
+            println("hi!")
+        }
+
 
         GraphArea.onMouseClicked = EventHandler {
             it.consume()
