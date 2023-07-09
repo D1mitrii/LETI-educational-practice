@@ -8,10 +8,13 @@ import javafx.scene.control.Alert
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.input.InputEvent
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
+import javafx.stage.StageStyle
 import java.net.URL
 import java.util.*
 import kotlin.system.exitProcess
@@ -90,6 +93,27 @@ class Controller : Initializable {
         handlerBlocker = false
         GraphArea.removeEventFilter(InputEvent.ANY, handlerAll)
     }
+
+    private fun showHelp(){
+        val dialog = Alert(Alert.AlertType.INFORMATION)
+        dialog.x = MainPane.scene.window.x + MainPane.width / 2
+        dialog.y = MainPane.scene.window.y + MainPane.height / 4
+        dialog.initStyle(StageStyle.UNDECORATED)
+        dialog.title = "Help info"
+        dialog.contentText = "\tAbout 'Dijkstra\'s Algorithm Visualizer' program\n" +
+                "- Button “Start Dijkstra” - starts the algorithm if the initial vertex has been selected, otherwise it gives an error message.\n" +
+                "- Button “Add vertex/Add edge” - switches the working space mode.\n" +
+                "- Button “Dialog Input” - provides the ability to enter a graph through a dialog box\n" +
+                "- “Reset” button - clears the workspace (deletes the graph).\n" +
+                "To the right of the main menu is the workspace, which, depending on the mode, " +
+                "allows you to interactively arrange vertices and connect them with edges. " +
+                "When you right-click on a vertex, it is possible to rename and delete it through the context menu. " +
+                "In the same way, using the right mouse button on edge, you can delete an edge or change its weight.\n\n" +
+                "At the end of the algorithm, next to each vertex, the minimum weight of the path from the initial vertex to " +
+                "this one will be displayed, if the path between them exists, otherwise the infinity symbol."
+        dialog.showAndWait()
+    }
+
     @FXML
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
         assert(MainPane != null) {"fx:id=\"MainPane\" was not injected: check your FXML file 'main.fxml'." }
@@ -119,6 +143,10 @@ class Controller : Initializable {
         collapseButton.onAction = EventHandler {
             it.consume()
             (MainPane.scene.window as Stage).isIconified = true
+        }
+        questionButton.onAction = EventHandler {
+            it.consume()
+            showHelp()
         }
         topBar.onMousePressed = EventHandler {
             x = it.sceneX
@@ -182,7 +210,12 @@ class Controller : Initializable {
             graph.clear()
         }
         NextStep.onAction = EventHandler {
-            println("Hi")
+            // TODO | Click show next step of Dijkstra algorithm
+        }
+        MainPane.addEventHandler(KeyEvent.KEY_PRESSED) {
+            if (!it.code.equals(KeyCode.F1)) return@addEventHandler
+            it.consume()
+            showHelp()
         }
     }
 }
