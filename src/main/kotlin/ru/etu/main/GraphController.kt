@@ -75,17 +75,17 @@ class GraphController(var pane: Pane){
             return false
         }
         for (vertex in vertexArray){
-            vertex.currectPath = Int.MAX_VALUE
+            vertex.currentPath = Int.MAX_VALUE
             vertex.isUsed = false
             pane.children.add(vertex.minPath)
         }
-        selectedVertex!!.currectPath = 0
+        selectedVertex!!.currentPath = 0
         selectedVertex!!.isUsed = true
 
 
         for (edge in selectedVertex!!.edges){
             val neighbor = edge.getVertex(selectedVertex!!)
-            neighbor.currectPath = edge.weight
+            neighbor.currentPath = edge.weight
             queue.add(neighbor)
         }
         return true
@@ -100,10 +100,10 @@ class GraphController(var pane: Pane){
             if (neighbor.isUsed) continue
             prevEdge!!.id = "EdgeCheck"
             queue.add(neighbor)
-            if (currentVertex!!.currectPath + prevEdge!!.weight < neighbor.currectPath){
+            if (currentVertex!!.currentPath + prevEdge!!.weight < neighbor.currentPath){
                 val prevPath = neighbor.minPath.text
-                neighbor.currectPath = currentVertex!!.currectPath + prevEdge!!.weight
-                return "Updating the shortest path to the vertex \'${neighbor.name}\' from $prevPath to ${neighbor.currectPath}"
+                neighbor.currentPath = currentVertex!!.currentPath + prevEdge!!.weight
+                return "Updating the shortest path to the vertex \'${neighbor.name}\' from $prevPath to ${neighbor.currentPath}"
             }
             return "The shortest path to the vertex \'${neighbor.name}\' could not be updated"
         }
@@ -129,7 +129,7 @@ class GraphController(var pane: Pane){
 
     fun afterAlgorithm(){
         vertexArray.forEach {
-            it.currectPath = Int.MAX_VALUE
+            it.currentPath = Int.MAX_VALUE
             it.id = "Vertex"
             pane.children.remove(it.minPath)
         }

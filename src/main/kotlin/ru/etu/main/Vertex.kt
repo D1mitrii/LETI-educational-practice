@@ -21,7 +21,7 @@ class Vertex(var name: String, x: Double, y: Double) : Circle(), Comparable<Vert
             }
             field = value
         }
-    var currectPath: Int = Int.MAX_VALUE
+    var currentPath: Int = Int.MAX_VALUE
         set(value) {
             field = value
             if (value == Int.MAX_VALUE)
@@ -89,8 +89,8 @@ class Vertex(var name: String, x: Double, y: Double) : Circle(), Comparable<Vert
     }
 
     override fun compareTo(other: Vertex): Int  = when{
-        currectPath == other.currectPath -> name.compareTo(other.name)
-        else -> currectPath - other.currectPath
+        currentPath == other.currentPath -> name.compareTo(other.name)
+        else -> currentPath - other.currentPath
     }
 
 }
