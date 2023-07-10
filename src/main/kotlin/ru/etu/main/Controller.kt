@@ -118,6 +118,15 @@ class Controller : Initializable {
         dialog.showAndWait()
     }
 
+    private fun showEnd(){
+        val dialog = Dialog<ButtonType>()
+        dialog.isResizable=false
+        dialog.headerText= "The algorithm has completed its work, the values are obtained:"
+        dialog.contentText= graph.getInfo()
+        dialog.dialogPane.scene.window.onCloseRequest = EventHandler { dialog.hide() }
+        dialog.showAndWait()
+    }
+
     @FXML
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
         assert(MainPane != null) {"fx:id=\"MainPane\" was not injected: check your FXML file 'main.fxml'." }
@@ -216,12 +225,13 @@ class Controller : Initializable {
             graph.clear()
         }
         NextStep.onAction = EventHandler {
-            if (TextInfo.text == "Algorithm finished") return@EventHandler
+            if (TextInfo.text == "Algorithm finished"){showEnd(); return@EventHandler}
             TextInfo.text = graph.makeStep()
         }
         Skip.onAction = EventHandler {
             TextInfo.text = graph.makeStep()
             while (TextInfo.text != "Algorithm finished"){TextInfo.text = graph.makeStep()}
+            showEnd()
         }
         DialogeInput.onMousePressed = EventHandler {
             val fxmlLoader = FXMLLoader(MainApplication::class.java.getResource("InputWindow.fxml"))

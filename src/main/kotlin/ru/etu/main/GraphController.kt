@@ -126,6 +126,18 @@ class GraphController(var pane: Pane){
         return checkEdge()
     }
 
+    fun getInfo(): String{
+        var info=""
+        for (vertex in vertexArray){
+            if (vertex == selectedVertex!!) continue
+            info += if (vertex.currentPath != Int.MAX_VALUE)
+                "The path from vertex ${selectedVertex!!.name} to ${vertex.name} has a cost: ${vertex.minPath.text}\n"
+            else
+                "It is impossible to get from vertex ${selectedVertex!!.name} to vertex ${vertex.name}"
+        }
+        return info
+    }
+
 
     fun afterAlgorithm(){
         vertexArray.forEach {
@@ -362,8 +374,6 @@ class GraphController(var pane: Pane){
         newEdge.addStart(selectedVertex!!)
         newEdge.addEnd(vertex)
         edgeArray.add(newEdge)
-        selectedVertex!!.edges.add(newEdge)
-        vertex.edges.add(newEdge)
         return newEdge
     }
 
