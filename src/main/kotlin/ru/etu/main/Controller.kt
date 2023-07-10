@@ -6,14 +6,18 @@ import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.*
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.input.InputEvent
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.GridPane
 import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import java.io.File
 import java.net.URL
 import java.util.*
 import kotlin.system.exitProcess
@@ -249,9 +253,26 @@ class Controller : Initializable {
         }
 
         MainPane.addEventHandler(KeyEvent.KEY_PRESSED) {
-            if (!it.code.equals(KeyCode.F1)) return@addEventHandler
-            it.consume()
-            showHelp()
+            if (it.code.equals(KeyCode.F1)) {
+                it.consume()
+                showHelp()
+            }
+            if (it.code.equals(KeyCode.F2)){
+                val dialog = Dialog<ButtonType>()
+                val dialogPane = dialog.dialogPane
+                val view = ImageView()
+                val image = Image(this::class.java.getResourceAsStream("secret.png"))
+                view.fitHeight = 720.0
+                view.fitWidth = 1920.0
+                dialog.width = image.width
+                dialog.height = image.height
+                view.image = image
+                dialog.dialogPane.content = view
+                val window =  dialog.dialogPane.scene.window
+                window.onCloseRequest = EventHandler { dialog.hide() }
+                dialog.showAndWait()
+            }
+            return@addEventHandler
         }
     }
 }

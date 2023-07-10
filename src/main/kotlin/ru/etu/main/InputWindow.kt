@@ -7,6 +7,7 @@ import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.Button
 import javafx.scene.control.TextArea
 import javafx.stage.FileChooser
+import java.io.File
 import java.lang.NumberFormatException
 import java.net.URL
 import java.util.*
@@ -43,11 +44,11 @@ class InputWindow {
     }
 
     private fun checkLine(elems: Array<String>) : Boolean {
-        if (elems.size != 3) {alert_throw("Incorrect line", "Number of elements per line should be 3!"); return false}
-        if (elems.isEmpty()) {
+        if (elems.size == 1 && elems[0].isEmpty()) {
             alert_throw("Empty line", "Empty lines not allowed!")
             return false
         }
+        if (elems.size != 3) {alert_throw("Incorrect line", "There should be 3 elements per line, except the first one"); return false}
         return true
     }
 
@@ -165,6 +166,7 @@ class InputWindow {
 
         openButton.onMousePressed = EventHandler{
             val fileChooser = FileChooser()
+            fileChooser.initialDirectory = File("./")
             val file = fileChooser.showOpenDialog(null)
             if (file != null)
             {
