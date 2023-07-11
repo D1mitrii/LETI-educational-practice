@@ -9,17 +9,10 @@ import javafx.scene.control.TextArea
 import javafx.stage.FileChooser
 import java.io.File
 import java.lang.NumberFormatException
-import java.net.URL
-import java.util.*
 
 
 class InputWindow {
 
-    @FXML
-    private lateinit var resources: ResourceBundle
-
-    @FXML
-    private lateinit var location: URL
 
     @FXML
     private lateinit var TextArea: TextArea
@@ -32,7 +25,7 @@ class InputWindow {
 
     private lateinit var graphController: GraphController
 
-    private fun alert_throw(headerText : String, contentText : String)
+    private fun alertThrow(headerText : String, contentText : String)
     {
         val alert = Alert(AlertType.ERROR)
 
@@ -45,10 +38,10 @@ class InputWindow {
 
     private fun checkLine(elems: Array<String>) : Boolean {
         if (elems.size == 1 && elems[0].isEmpty()) {
-            alert_throw("Empty line", "Empty lines not allowed!")
+            alertThrow("Empty line", "Empty lines not allowed!")
             return false
         }
-        if (elems.size != 3) {alert_throw("Incorrect line", "There should be 3 elements per line, except the first one"); return false}
+        if (elems.size != 3) {alertThrow("Incorrect line", "There should be 3 elements per line, except the first one"); return false}
         return true
     }
 
@@ -74,7 +67,7 @@ class InputWindow {
             var w: Int
             if (lines[0].isEmpty() || lines[0][0].isWhitespace())
             {
-                alert_throw("Empty field!", "The field is empty!")
+                alertThrow("Empty field!", "The field is empty!")
 
                 return@EventHandler
             }
@@ -83,7 +76,7 @@ class InputWindow {
                 N = lines[0].toInt()
             }
             catch (e: NumberFormatException){
-                alert_throw("Wrong input!", "Digit must be first, not the letter/symbol!")
+                alertThrow("Wrong input!", "Digit must be first, not the letter/symbol!")
                 return@EventHandler
             }
 
@@ -91,7 +84,7 @@ class InputWindow {
                 val elems = lines[i].split("\\s+".toRegex()).toTypedArray()
                 if (!checkLine(elems)) return@EventHandler
                 if (elems[0].length !in 1..2) {
-                    alert_throw("Wrong name!", "The name of the vertex is incorrect!")
+                    alertThrow("Wrong name!", "The name of the vertex is incorrect!")
                     return@EventHandler
                 }
 
@@ -100,17 +93,17 @@ class InputWindow {
                     y = elems[2].toInt()
                 }
                 catch (e: NumberFormatException){
-                    alert_throw("Wrong coordinates", "Cords of Vertex X and Y must be integer")
+                    alertThrow("Wrong coordinates", "Cords of Vertex X and Y must be integer")
                     return@EventHandler
                 }
 
                 if (x !in 0..980) {
-                    alert_throw("Error X!", "The X coordinate is incorrect!")
+                    alertThrow("Error X!", "The X coordinate is incorrect!")
 
                     return@EventHandler
                 }
                 if (y !in 0..624) {
-                    alert_throw("Error Y!", "The Y coordinate is incorrect!")
+                    alertThrow("Error Y!", "The Y coordinate is incorrect!")
 
                     return@EventHandler
                 }
@@ -122,11 +115,11 @@ class InputWindow {
                 if (!checkLine(elems)) return@EventHandler
 
                 if (elems[0] == elems[1]) {
-                    alert_throw("Loop error!", "There must be no loop in graph!")
+                    alertThrow("Loop error!", "There must be no loop in graph!")
                     return@EventHandler
                 }
                 if (elems[0].length !in 1..2 || elems[1].length !in 1..2 || stringToVertex[elems[0]] == null || stringToVertex[elems[1]] == null) {
-                    alert_throw("Wrong name!", "The name of the vertex is incorrect!")
+                    alertThrow("Wrong name!", "The name of the vertex is incorrect!")
                     return@EventHandler
                 }
 
@@ -134,13 +127,13 @@ class InputWindow {
                     w = elems[2].toInt()
                 }
                 catch (e: NumberFormatException){
-                    alert_throw("Edge weight error!", "The weight of the edge must be integer!")
+                    alertThrow("Edge weight error!", "The weight of the edge must be integer!")
 
                     return@EventHandler
                 }
 
                 if (w !in 0..50) {
-                    alert_throw("Edge weight error!", "The weight of the edge is incorrect!")
+                    alertThrow("Edge weight error!", "The weight of the edge is incorrect!")
 
                     return@EventHandler
                 }
