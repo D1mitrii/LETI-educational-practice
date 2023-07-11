@@ -1,5 +1,6 @@
 package ru.etu.main
 
+import javafx.beans.property.BooleanProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.Alert
@@ -23,7 +24,24 @@ class InputWindow {
     @FXML
     private lateinit var openButton: Button
 
-    private lateinit var graphController: GraphController
+
+    private var flag: Boolean = false
+
+    private val stringToVertex: MutableMap<String, Vertex> = mutableMapOf()
+    private val edges: MutableList<Edge> = mutableListOf()
+
+
+    fun getVertexList(): MutableList<Vertex> {
+        return stringToVertex.values.toMutableList()
+    }
+
+    fun getEdgeList(): MutableList<Edge>{
+        return edges
+    }
+
+    fun getFlag(): Boolean{
+        return flag
+    }
 
     private fun alertThrow(headerText : String, contentText : String)
     {
@@ -45,9 +63,6 @@ class InputWindow {
         return true
     }
 
-    fun setGraph(graphController: GraphController){
-        this.graphController = graphController
-    }
 
     @FXML
     fun initialize() {
@@ -57,9 +72,9 @@ class InputWindow {
 
 
         approveButton.onMousePressed = EventHandler {
-            graphController.clear()
-            val stringToVertex: MutableMap<String, Vertex> = mutableMapOf()
-            val edges: MutableList<Edge> = mutableListOf()
+            flag = false
+            stringToVertex.clear()
+            edges.clear()
             val Text = textArea.text
             val N : Int
             val lines : List<String> = Text.lines()
@@ -153,7 +168,7 @@ class InputWindow {
                 edge.changeWeight(w)
                 edges.add(edge)
             }
-            graphController.setGraph(stringToVertex.values.toMutableList(), edges)
+            flag = true
             approveButton.scene.window.hide()
         }
 

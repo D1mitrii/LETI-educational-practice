@@ -241,7 +241,6 @@ class Controller : Initializable {
             val fxmlLoader = FXMLLoader(MainApplication::class.java.getResource("InputWindow.fxml"))
             val dialogPane = fxmlLoader.load<DialogPane>()
             val dialogController = fxmlLoader.getController<InputWindow>()
-            dialogController.setGraph(graph)
             val dialog = Dialog<ButtonType>()
             dialog.dialogPane = dialogPane
             dialog.title = "Input from Dialog"
@@ -250,6 +249,9 @@ class Controller : Initializable {
                 dialogWindow.hide()
             }
             dialog.showAndWait()
+            if (dialogController.getFlag()){
+                graph.setGraph(dialogController.getVertexList(), dialogController.getEdgeList())
+            }
         }
 
         MainPane.addEventHandler(KeyEvent.KEY_PRESSED) {

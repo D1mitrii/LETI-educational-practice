@@ -385,7 +385,7 @@ class GraphController(var pane: Pane){
     }
 
     fun setGraph(vertexes: MutableList<Vertex>, edges: MutableList<Edge>){
-        freeNames()
+        clear()
         vertexes.forEach { setHandlersVertex(it); names[it.name] = false }
         edges.forEach { setHandlersEdge(it) }
         vertexArray = vertexes
