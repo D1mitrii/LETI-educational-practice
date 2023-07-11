@@ -1,8 +1,8 @@
 package ru.etu.main
 
-import javafx.beans.property.BooleanProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
+import javafx.fxml.Initializable
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.Button
@@ -10,9 +10,11 @@ import javafx.scene.control.TextArea
 import javafx.stage.FileChooser
 import java.io.File
 import java.lang.NumberFormatException
+import java.net.URL
+import java.util.*
 
 
-class InputWindow {
+class InputWindow : Initializable {
 
 
     @FXML
@@ -65,7 +67,7 @@ class InputWindow {
 
 
     @FXML
-    fun initialize() {
+    override fun initialize(p0: URL?, p1: ResourceBundle?) {
         assert(textArea != null) {"fx:id=\"TextArea\" was not injected: check your FXML file 'InputWndow.fxml'." }
         assert(approveButton != null) {"fx:id=\"approveButton\" was not injected: check your FXML file 'InputWndow.fxml'." }
         assert(openButton != null) {"fx:id=\"openButton\" was not injected: check your FXML file 'InputWindow.fxml'." }
