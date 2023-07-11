@@ -15,7 +15,7 @@ class InputWindow {
 
 
     @FXML
-    private lateinit var TextArea: TextArea
+    private lateinit var textArea: TextArea
 
     @FXML
     private lateinit var approveButton: Button
@@ -51,7 +51,7 @@ class InputWindow {
 
     @FXML
     fun initialize() {
-        assert(TextArea != null) {"fx:id=\"TextArea\" was not injected: check your FXML file 'InputWndow.fxml'." }
+        assert(textArea != null) {"fx:id=\"TextArea\" was not injected: check your FXML file 'InputWndow.fxml'." }
         assert(approveButton != null) {"fx:id=\"approveButton\" was not injected: check your FXML file 'InputWndow.fxml'." }
         assert(openButton != null) {"fx:id=\"openButton\" was not injected: check your FXML file 'InputWindow.fxml'." }
 
@@ -60,7 +60,7 @@ class InputWindow {
             graphController.clear()
             val stringToVertex: MutableMap<String, Vertex> = mutableMapOf()
             val edges: MutableList<Edge> = mutableListOf()
-            val Text = TextArea.text
+            val Text = textArea.text
             val N : Int
             val lines : List<String> = Text.lines()
             var x: Int; var y: Int
@@ -163,10 +163,10 @@ class InputWindow {
             val file = fileChooser.showOpenDialog(null)
             if (file != null)
             {
-                TextArea.clear()
+                textArea.clear()
                 for (line in file.readLines()) {
                     if (line.isNotEmpty())
-                        TextArea.appendText(line + "\n")
+                        textArea.appendText(line + "\n")
                 }
             }
         }
