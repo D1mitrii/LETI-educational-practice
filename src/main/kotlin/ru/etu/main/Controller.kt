@@ -259,22 +259,6 @@ class Controller : Initializable {
                 it.consume()
                 showHelp()
             }
-            if (it.code.equals(KeyCode.F2)){
-                val dialog = Dialog<ButtonType>()
-                val dialogPane = dialog.dialogPane
-                val view = ImageView()
-                val image = Image(this::class.java.getResourceAsStream("secret.png"))
-                view.fitHeight = 720.0
-                view.fitWidth = 1920.0
-                dialog.width = image.width
-                dialog.height = image.height
-                view.image = image
-                dialog.dialogPane.content = view
-                val window =  dialog.dialogPane.scene.window
-                window.onCloseRequest = EventHandler { dialog.hide() }
-                dialog.showAndWait()
-            }
-            return@addEventHandler
         }
     }
 }
